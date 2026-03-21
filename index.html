@@ -1,0 +1,197 @@
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no, viewport-fit=contain">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="AHTT (2004-2025)">
+    <meta name="theme-color" content="#000">
+    <title>An Hoàng Trung Tướng (2004-2025)</title>
+    <style>
+        @font-face {
+            font-family: 'GIUN_TAHOMA';
+            src: url('https://raw.githubusercontent.com/asinerum/project/master/static/fonts/TAHOMA.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'GIUN_TAHOMA';
+            src: url('https://raw.githubusercontent.com/asinerum/project/master/static/fonts/tahomabd.woff') format('woff');
+            font-weight: bold;
+            font-style: normal;
+        }
+
+        body {
+            margin: 0 auto;
+            display: block;
+            max-width: 700px;
+            font-family: sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            font-family: 'GIUN_TAHOMA', Tahoma, 'sans-serif';
+        }
+
+        .post-year {
+            cursor: pointer;
+            background: #f4f4f4;
+            padding: 0 10px;
+        }
+
+        .post-year:hover {
+            background: #eee;
+        }
+
+        .post.deactive,
+        .year-note.deactive {
+            display: none;
+        }
+
+        .post {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+            padding-left: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .post-tag {
+            margin-right: 15px;
+            min-width: 80px;
+            text-align: right;
+            color: #666;
+        }
+
+        .post-date {
+            font-size: 0.7em;
+        }
+
+        .post-label {
+            font-size: 0.7em;
+            display: block;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .post-label:hover {
+            text-decoration: underline;
+        }
+
+        .post-count {
+            font-weight: normal;
+            font-size: 0.5em;
+            opacity: 0.7;
+        }
+
+        .post-note {
+            font-size: 0.7em;
+            display: block;
+            font-weight: bold;
+            font-style: italic;
+            color: #666;
+        }
+
+        a {
+            text-decoration: none;
+            color: blue;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="content-container">
+    </div>
+    <div id="label-loader-container">
+    </div>
+
+    <script>
+        const jsonPath = '_data/2008-2025.json';
+
+        let postData = [];
+        async function init() {
+            try {
+                const response = await fetch(jsonPath);
+                if (!response.ok) throw new Error('Network response was not ok');
+                postData = await response.json();
+                renderAll(postData);
+            } catch (error) {
+                console.error("Failed to load JSON:", error);
+                document.getElementById('content-container').innerHTML = "Failed to load content.";
+            }
+        }
+
+        function renderAll(data) {
+            const container = document.getElementById('content-container');
+            container.innerHTML = data.map(item => `
+        <div class="year">
+            <h2 class="post-year">${item.year} <sub class="post-count">${item.posts.length} posts</sub></h2>
+            ${item.note ? `<h5 class="year-note deactive">${item.note}</h5>` : ''}
+            ${item.posts.map(post => `
+                <div class="post deactive">
+                    <div class="post-tag">
+                        <sup class="post-date">${post.date}/${item.year}</sup>
+                        <sub class="post-label">${post.label}</sub>
+                    </div>
+                    <div class="post-link">
+                        <a href="${post.link}">${post.title}</a>
+                        ${post.note ? `<sub class="post-note">${post.note}</sub>` : ''}
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `).join('');
+        }
+
+        document.addEventListener('click', (e) => {
+            // Toggle Year Visibility
+            if (e.target.classList.contains('post-year') || e.target.classList.contains('post-count')) {
+                const parentYear = e.target.closest('.year');
+                parentYear.querySelectorAll('.post, .year-note').forEach(p => p.classList.toggle('deactive'));
+            }
+
+            // Filter by Label
+            if (e.target.classList.contains('post-label')) {
+                const selectedLabel = e.target.textContent.trim();
+                const loader = document.getElementById('label-loader-container');
+
+                const filtered = postData.flatMap(yearGroup =>
+                    yearGroup.posts
+                        .filter(p => p.label === selectedLabel)
+                        .map(post => ({ ...post, year: yearGroup.year }))
+                );
+
+                loader.innerHTML = `
+            <div class="year">
+                <h2 class="post-year">Label: ${selectedLabel} <sub class="post-count">${filtered.length} posts</sub></h2>
+                ${filtered.map(post => `
+                    <div class="post">
+                        <div class="post-tag">
+                            <sup class="post-date">${post.date}/${post.year}</sup>
+                            <sub class="post-label">${post.label}</sub>
+                        </div>
+                        <div class="post-link">
+                            <a href="${post.link}">${post.title}</a>
+                            ${post.note ? `<sub class="post-note">${post.note}</sub>` : ''}
+                        </div>
+                    </div>
+                `).join('')}
+            </div>`;
+
+                // Scroll into view
+                loader.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+
+        init();
+    </script>
+</body>
+
+</html>

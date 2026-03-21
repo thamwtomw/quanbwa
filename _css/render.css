@@ -1,0 +1,320 @@
+:root {
+    --bg-primary: #fff;
+    --bg-secondary: #f4f4f7;
+    --bg-tertiary: #e9e9ee;
+    --text-primary: #121212;
+    --text-secondary: #4a4a4a;
+    --text-link: #007bff;
+    --text-link-alt: #FF9900;
+    --accent: #2a7aef;
+    --border-primary: #ccc;
+    --border-subtle: #eee;
+    --text-zizun: blue;
+    color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-primary: #1e1e1e;
+        --bg-secondary: #2c2c2c;
+        --bg-tertiary: #444;
+        --text-primary: #ccc;
+        --text-secondary: #c9c9c9;
+        --text-link: #4493f8;
+        --text-link-alt: #FF9900;
+        --accent: #2a7aef;
+        --border-primary: #555;
+        --border-subtle: #333;
+        --text-zizun: #2196f3;
+    }
+}
+
+@font-face {
+    font-family: 'GIUN_TAHOMA';
+    src: url('https://raw.githubusercontent.com/asinerum/project/master/static/fonts/TAHOMA.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'GIUN_TAHOMA';
+    src: url('https://raw.githubusercontent.com/asinerum/project/master/static/fonts/tahomabd.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+}
+
+body {
+    font-family: GIUN_TAHOMA, Tahoma, 'sans-serif';
+}
+
+*::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: rgba(120, 120, 120, 0.7);
+    border-radius: 6px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+a,
+code,
+pre,
+p,
+div,
+span,
+font {
+    overflow-wrap: anywhere;
+    word-wrap: break-word;
+    hyphens: auto;
+}
+
+a {
+    color: var(--text-link);
+    text-decoration: none;
+    transition: color 0.2s ease;
+    overflow-wrap: anywhere;
+    word-break: break-all;
+}
+
+a:hover,
+a:focus {
+    color: var(--accent);
+}
+
+body {
+    margin: 0 auto;
+    font-size: 16px;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+}
+
+
+summary {
+    font-size: 1.3em;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 5px 5px;
+}
+
+summary::-webkit-details-marker {
+    display: none;
+}
+
+summary.post-summary {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+summary::before {
+    content: '›';
+    display: inline-block;
+    margin-right: 10px;
+    font-family: serif;
+    font-weight: 100;
+    transition: transform 0.2s ease;
+}
+
+details[open] summary::before {
+    transform: rotate(90deg);
+}
+
+.post-body {
+    background: var(--bg-primary);
+    padding: 10px;
+    margin: 20px 0;
+    border-radius: 5px;
+    color: var(--text-secondary);
+}
+
+
+.content {
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.comment-block {
+    border-bottom: 1px solid var(--border-primary);
+    display: block;
+}
+
+.comment-block.deactive {
+    display: none;
+}
+
+
+.comment-header {
+    font-size: 18px;
+    padding: 10px 5px;
+}
+
+.comment-header>a {
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.comment-header i a {
+    color: var(--text-link-alt);
+    font-weight: normal;
+    margin-left: 5px;
+}
+
+
+.comment-body {
+    white-space: normal;
+    padding: 0 10px;
+    font-size: 18px;
+    position: relative;
+}
+
+.comment-zz .comment-body {
+    color: var(--text-zizun);
+}
+
+a.comment-ref {
+    font-size: 10px;
+    font-family: 'GIUN_TAHOMA';
+    font-weight: bold;
+    border: 1px solid var(--border-primary);
+    padding: 5px;
+    border-radius: 5px;
+    margin-left: 10px;
+}
+
+a.comment-ref>i {
+    color: var(--text-link-alt) !important;
+}
+
+.youtube-link,
+.img-link,
+.im,
+.yt {
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.comment-footer {
+    font-weight: bold;
+    padding: 20px 10px 10px 10px;
+    font-size: 10px;
+}
+
+
+
+#btn-zz {
+    position: fixed;
+    top: 20vh;
+    right: calc((100% - min(100%, 700px)) / 2 + 10px);
+    width: 30px;
+    height: 30px;
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-primary);
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+#btn-zz::after {
+    content: '☰';
+}
+
+.popup-comment {
+    width: calc(100% - 14px);
+    max-width: 700px;
+    /* never wider than screen - safe margins */
+    min-width: 280px;
+    /* readable on small phones */
+    max-height: 61.8vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: absolute;
+    z-index: 2000;
+    padding: 5px;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: 5px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    box-sizing: border-box;
+    pointer-events: auto;
+    cursor: default;
+    /* important */
+    user-select: text;
+    /* allow selecting text inside */
+    touch-action: manipulation;
+    /* better mobile feel */
+    will-change: left, top;
+    /* helps iOS rendering during drag */
+    transform: translate3d(0, 0, 0);
+    /* force GPU layer – smoother drag */
+    -webkit-user-drag: none;
+    /* prevent image/text drag interference */
+}
+
+.popup-comment.dragging {
+    opacity: 0.92;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+.popup-close-btn {
+    position: absolute;
+    top: 8px;
+    right: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.popup-close-btn::after {
+    content: '❌';
+}
+
+
+.popup-comment>p {
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+.popup-editor {
+    display: block;
+    position: absolute;
+    z-index: 1000;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    color: var(--text-secondary);
+    border-radius: 5px;
+    font-family: 'GIUN_TAHOMA';
+}
+
+
+.post-body .big-img,
+.post-body iframe,
+.comment-block .big-img,
+.comment-block iframe {
+    max-width: 80%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    border-radius: 5px;
+}
+
+.post-body iframe,
+.comment-block iframe {
+    aspect-ratio: 16/9;
+    border: 0;
+}
