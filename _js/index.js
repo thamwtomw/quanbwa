@@ -93,9 +93,9 @@ const JS_URL = new URL(import.meta.url);
 const JSON_URL = new URL(JSON_PATH, JS_URL);
 
 // Distinct keys for each file's fingerprint
-const STORAGE_KEY = 'JSON_POST_DATA';
+const POST_STORAGE_KEY = 'JSON_POST_DATA';
 const BWA_STORAGE_KEY = 'BWA_DATA';
-const ETAG_POST_KEY = 'ETAG_JSON_POST';
+const ETAG_POST_KEY = 'ETAG_JSON_POST_DATA';
 const ETAG_BWA_KEY = 'ETAG_BWA_DATA';
 
 //const JSON_URL = 'https://cdn.jsdelivr.net/gh/thamwtomw/quanbwa/_data/full_post.json';
@@ -118,7 +118,7 @@ async function fetchJSON() {
         const savedPostETag = localStorage.getItem(ETAG_POST_KEY);
         const savedBwaETag = localStorage.getItem(ETAG_BWA_KEY);
 
-        const cachedPostData = localStorage.getItem(STORAGE_KEY);
+        const cachedPostData = localStorage.getItem(POST_STORAGE_KEY);
         const cachedBwaData = localStorage.getItem(BWA_STORAGE_KEY);
 
         // 2. Only use cache if BOTH fingerprints match our history
@@ -141,7 +141,7 @@ async function fetchJSON() {
         // 4. Update individual data and ETags if they succeeded
         if (results[0].status === 'fulfilled') {
             JSON_POST_DATA = results[0].value;
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(JSON_POST_DATA));
+            localStorage.setItem(POST_STORAGE_KEY, JSON.stringify(JSON_POST_DATA));
             localStorage.setItem(ETAG_POST_KEY, currentPostETag);
         }
 
@@ -153,7 +153,7 @@ async function fetchJSON() {
 
     } catch (e) {
         console.error('Network check failed, falling back to cache:', e);
-        const cp = localStorage.getItem(STORAGE_KEY);
+        const cp = localStorage.getItem(POST_STORAGE_KEY);
         const cb = localStorage.getItem(BWA_STORAGE_KEY);
         if (cp) JSON_POST_DATA = JSON.parse(cp);
         if (cb) BWA_DATA = JSON.parse(cb);
