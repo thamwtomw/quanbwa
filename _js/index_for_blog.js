@@ -1,8 +1,4 @@
-const
-    DEFAULT_TITLE = 'Archive of QUÁN BỰA -  AN HOÀNG TRUNG TƯỚNG',
-    BODY_HEADER = document.querySelector('.header'),
-    BODY_CONTENT = document.querySelector('.content'),
-    BODY_FOOTER = document.querySelector('.footer');
+const DEFAULT_TITLE = 'Archive of QUÁN BỰA -  AN HOÀNG TRUNG TƯỚNG';
 
 var DEFAULT_SLOGAN = '<p>(2008 - 2009) Quán Bựa của công dân ngoan hiền An Hoàng Trung Tướng chầu mừng các Ông Lừa Bà Lừa</p>';
 DEFAULT_SLOGAN += '<p>(2009 - 2012) Ở đây có những thông tin mà đồng chí nào chưa đủ chín chắn và khách quan để đọc và ngẫm nghĩ về chúng một cách thấu đáo và nghiêm túc hoàn toàn không nên liếc qua</p>';
@@ -23,9 +19,7 @@ const FOOTER_LINKS = [
 /**
  * Apply style and script
  */
-
 headerAlt();
-
 async function headerAlt() {
     // Remove head
     //document.head.innerHTML = '';
@@ -58,6 +52,9 @@ async function headerAlt() {
     // Set Title
     document.title = `${document.querySelector('.post-summary') ? document.querySelector('.post-summary').textContent + ' - ' + DEFAULT_TITLE : DEFAULT_TITLE}`;
 
+    const
+        BODY_HEADER = document.querySelector('.header'),
+        BODY_FOOTER = document.querySelector('.footer');
     // Set Body Header
     if (BODY_HEADER) {
         BODY_HEADER.innerHTML = `<h2><a href="../../">${DEFAULT_TITLE}</a></h2>`;
@@ -189,11 +186,13 @@ async function renderHTMLfromJSON_init() {
     if (JSON_POST_DATA.length > 0) {
         renderHTMLfromJSON(JSON_POST_DATA);
     } else {
+        const BODY_CONTENT = document.querySelector('.content');
         BODY_CONTENT.innerHTML = "Failed to load content.";
     }
 }
 
 function renderHTMLfromJSON(data) {
+    const BODY_CONTENT = document.querySelector('.content');
     BODY_CONTENT.innerHTML = `
         <div class="content">
             <div id="index-content-container">
