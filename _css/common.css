@@ -1,0 +1,702 @@
+:root {
+    --bg-primary: #fff;
+    --bg-secondary: #f4f4f7;
+    --bg-tertiary: #e9e9ee;
+    --text-primary: #121212;
+    --text-secondary: #4a4a4a;
+    --text-link: #007bff;
+    --text-link-alt: #FF9900;
+    --accent: #2a7aef;
+    --border-primary: #ccc;
+    --border-subtle: #eee;
+    --text-zizun: blue;
+    --comment-font-size: 18px;
+    color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-primary: #1e1e1e;
+        --bg-secondary: #2c2c2c;
+        --bg-tertiary: #444;
+        --text-primary: #ccc;
+        --text-secondary: #c9c9c9;
+        --text-link: #4493f8;
+        --text-link-alt: #FF9900;
+        --accent: #2a7aef;
+        --border-primary: #555;
+        --border-subtle: #333;
+        --text-zizun: #2196f3;
+    }
+}
+
+
+*::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: rgba(120, 120, 120, 0.7);
+    border-radius: 6px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+summary,
+button,
+.btn-action-group,
+.post-nav-container {
+    -webkit-user-select: none;
+    /* Safari */
+    -ms-user-select: none;
+    /* IE 10 and 11 */
+    user-select: none;
+    /* Standard syntax */
+}
+
+a,
+code,
+pre,
+p,
+div,
+span,
+font {
+    overflow-wrap: anywhere;
+    word-wrap: break-word;
+    hyphens: auto;
+}
+
+a {
+    color: var(--text-link);
+    text-decoration: none;
+    transition: color 0.2s ease;
+    overflow-wrap: anywhere;
+    word-break: break-all;
+}
+
+a:hover,
+a:focus {
+    color: var(--accent);
+    text-decoration: underline;
+}
+
+/* LAYOUT */
+
+body {
+    margin: 0 auto;
+    font-family: GIUN_TAHOMA, Tahoma, 'sans-serif';
+    font-size: 16px;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+}
+
+.header,
+.content,
+.footer {
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* HEADER */
+
+.header {
+    padding: 5px;
+}
+
+.header a {
+    color: var(--text-secondary);
+    text-decoration: none;
+}
+
+.header a:hover {
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+/* FOOTER */
+
+.footer {
+    padding: 20px 10px;
+    border-top: 1px solid var(--border-primary);
+}
+
+.footer h6 {
+    text-transform: uppercase;
+}
+
+.footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 20px;
+    justify-content: center;
+}
+
+.footer-links a {
+    color: #0066cc;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.2s;
+}
+
+.footer-links a:hover {
+    color: #004494;
+    text-decoration: underline;
+}
+
+/* Optional: separator between links */
+.footer-links a:not(:last-child)::after {
+    content: "|";
+    margin-left: 15px;
+    color: #ccc;
+    text-decoration: none;
+    display: inline-block;
+}
+
+
+/* CONTENT */
+
+.content details {
+    padding: 0 5px;
+}
+
+summary {
+    font-size: 1.3em;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 5px 5px;
+}
+
+summary::-webkit-details-marker {
+    display: none;
+}
+
+summary.post-summary {
+    font-weight: bold;
+}
+
+summary::before {
+    content: '›';
+    display: inline-block;
+    margin-right: 10px;
+    font-family: serif;
+    font-weight: 100;
+    transition: transform 0.2s ease;
+}
+
+details[open] summary::before {
+    transform: rotate(90deg);
+}
+
+.post-body {
+    background: var(--bg-primary);
+    padding: 10px;
+    margin: 20px 0;
+    border-radius: 5px;
+    color: var(--text-secondary);
+}
+
+
+.comment-block {
+    border-bottom: 1px solid var(--border-primary);
+    display: block;
+}
+
+.comment-block.deactive {
+    display: none;
+}
+
+
+.comment-header {
+    font-size: 18px;
+    padding: 10px 5px;
+}
+
+.comment-header>a {
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.bwa-vip-rank {
+    width: 18px;
+    height: 18px;
+    margin: 0 5px;
+}
+
+
+.bwa-stamp {
+    width: 24px;
+    height: 24px;
+    margin: 0 5px;
+}
+
+.comment-header i a {
+    color: var(--text-link-alt);
+    font-weight: normal;
+    margin-left: 5px;
+}
+
+
+.comment-body {
+    white-space: normal;
+    padding: 0 10px;
+    font-size: var(--comment-font-size);
+    position: relative;
+}
+
+.comment-zz .comment-body {
+    color: var(--text-zizun);
+}
+
+a.comment-ref {
+    font-size: 10px;
+    font-family: 'GIUN_TAHOMA';
+    font-weight: bold;
+    border: 1px solid var(--border-primary);
+    padding: 5px;
+    border-radius: 5px;
+    margin-left: 10px;
+}
+
+a.comment-ref>i {
+    color: var(--text-link-alt) !important;
+}
+
+.youtube-link,
+.img-link,
+.im,
+.yt {
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.comment-footer {
+    font-weight: bold;
+    padding: 20px 10px 10px 10px;
+    font-size: 10px;
+}
+
+p.footer-post-tittle {
+    display: none;
+    margin-block-start: 0.5em;
+    margin-block-end: 0;
+}
+
+p.footer-post-tittle.active {
+    display: block;
+}
+
+
+
+/* POPUP */
+
+.popup-comment {
+    width: calc(100% - 14px);
+    max-width: 700px;
+    /* never wider than screen - safe margins */
+    min-width: 280px;
+    /* readable on small phones */
+    max-height: 61.8vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: absolute;
+    z-index: 2000;
+    padding: 5px;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: 5px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    box-sizing: border-box;
+    pointer-events: auto;
+    cursor: default;
+    /* important */
+    -webkit-user-select: text;
+    /* Safari */
+    -ms-user-select: text;
+    /* IE 10 and 11 */
+    user-select: text;
+    /* Standard syntax */
+    /* allow selecting text inside */
+    touch-action: manipulation;
+    /* better mobile feel */
+    will-change: left, top;
+    /* helps iOS rendering during drag */
+    transform: translate3d(0, 0, 0);
+    /* force GPU layer – smoother drag */
+    -webkit-user-drag: none;
+    /* prevent image/text drag interference */
+}
+
+.popup-comment.dragging {
+    opacity: 0.92;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+.popup-close-btn {
+    position: absolute;
+    top: 8px;
+    right: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.popup-close-btn::after {
+    content: '❌';
+}
+
+
+.popup-comment>p {
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+.popup-editor {
+    display: block;
+    position: absolute;
+    z-index: 1000;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    color: var(--text-secondary);
+    border-radius: 5px;
+    font-family: 'GIUN_TAHOMA';
+}
+
+
+.post-body .big-img,
+.post-body iframe,
+.comment-block .big-img,
+.comment-block iframe {
+    max-width: 80%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    border-radius: 5px;
+}
+
+.post-body iframe,
+.comment-block iframe {
+    aspect-ratio: 16/9;
+    border: 0;
+}
+
+
+
+
+
+
+
+
+
+
+/* FLOATING BUTTON ACTION GROUP  */
+.btn-action-group {
+    position: fixed;
+    top: 20vh;
+    right: calc((100% - min(100%, 700px)) / 2 + 10px);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    /* Align buttons to the right */
+    gap: 12px;
+    z-index: 2000;
+    /* ... existing styles ... */
+}
+
+.btn-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    /* 12px spacing requested */
+}
+
+.btn-label {
+    font-size: 14px;
+    color: var(--text-primary);
+    text-shadow: 0 3px 3px rgba(0, 0, 0, 0.4);
+    /* Subtle shading */
+    white-space: nowrap;
+    opacity: 0.8;
+}
+
+/* Optional: Keep the cursor as a pointer but prevent text selection */
+.btn-label,
+.btn-action-group button {
+    cursor: pointer;
+}
+
+.btn-action-group button {
+    width: 35px;
+    height: 35px;
+    background-color: var(--bg-tertiary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-primary);
+    box-shadow: 1px 3px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+/* Visibility Logic */
+.btn-sub {
+    display: none;
+}
+
+.btn-action-group.active .btn-sub {
+    display: flex;
+}
+
+
+
+
+
+
+
+
+
+
+
+/* BOTTOM OF EACH POST PAGE */
+
+.post-nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 15px;
+    margin-top: 40px;
+    border-top: 1px solid var(--border-primary);
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    gap: 10px;
+    /* Adds spacing between buttons */
+}
+
+.post-nav-btn {
+    display: inline-block;
+    padding: 10px;
+    background-color: var(--bg-tertiary);
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: bold;
+
+    /* Truncation Magic */
+    max-width: 40%;
+    /* Adjust based on preference */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+.post-nav-btn:hover {
+    opacity: 0.8;
+}
+
+/* Ensure the center button stays centered and side buttons take equal width if needed */
+.post-nav-btn.prev,
+.post-nav-btn.next,
+.post-nav-container span {
+    flex: 1;
+}
+
+.post-nav-btn.next {
+    text-align: center;
+}
+
+
+.post-nav-btn.prev {
+    text-align: center;
+}
+
+/* Allow Home button to stay small */
+.post-nav-btn.home {
+    max-width: none;
+    flex: 0 0 auto;
+    /* Stay in middle*/
+}
+
+.post-nav-container span {
+    visibility: hidden;
+}
+
+
+
+
+.label-group .label-posts-list {
+    margin-top: 0.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.label-group .post-item-row {
+    display: flex;
+    align-items: flex-start;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.post-item-row.active a {
+    font-weight: bolder;
+    color: var(--text-link-alt);
+}
+
+.post-item-row.active span::before {
+    content: '› ';
+}
+
+
+.label-group .post-item-row:last-child {
+    border-bottom: none;
+}
+
+.label-group .post-item-date {
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: var(--text-primary);
+    flex: 0 0 80px;
+    padding-top: 2px;
+}
+
+.label-group .post-item-body {
+    flex: 1;
+}
+
+
+
+
+.label-group .post-item-note {
+    font-size: 0.7em;
+    display: block;
+    color: var(--text-secondary);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* INDEX PAGE */
+#index-content-container,
+#index-label-loader-container {
+    margin: 10px;
+}
+
+#index-label-loader-container {
+    margin-top: 100px;
+}
+
+
+.index-year-posts,
+.index-label-posts {
+    margin: 5px auto;
+    padding: 5px 10px;
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.index-label-posts {
+    background: var(--bg-secondary);
+
+}
+
+
+.index-year-posts:hover {
+    background: var(--bg-tertiary);
+}
+
+.index-post.index-deactive,
+.index-year-note.index-deactive {
+    display: none;
+}
+
+.index-post {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 5px 5px 5px 10px;
+    border-bottom: 1px solid var(--border-primary);
+}
+
+.index-year .index-post:last-of-type {
+    border-bottom: none;
+}
+
+.index-post-tag {
+    margin-right: 15px;
+    min-width: 80px;
+    text-align: right;
+    color: var(--text-secondary);
+}
+
+.index-post-date {
+    font-size: 0.7em;
+}
+
+.index-post-label {
+    font-size: 0.7em;
+    display: block;
+    font-weight: bold;
+    cursor: pointer;
+    color: var(--text-secondary);
+    /* Applied zizun variable here */
+}
+
+.index-post-label:hover {
+    text-decoration: underline;
+    color: var(--text-primary);
+}
+
+.index-post-count {
+    font-weight: normal;
+    font-size: 0.5em;
+    opacity: 0.7;
+}
+
+.index-post-link a {
+    color: var(--text-link);
+    text-decoration: none;
+}
+
+.index-post-link a:hover {
+    text-decoration: underline;
+}
+
+.index-post-note {
+    font-size: 0.7em;
+    display: block;
+    color: var(--text-secondary);
+}

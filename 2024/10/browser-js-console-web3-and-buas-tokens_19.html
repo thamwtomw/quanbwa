@@ -1,0 +1,166 @@
+<!DOCTYPE html><html lang="vi-VN"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/antonroch/blogger/fonts.css"><link rel="stylesheet" href="../../_css/common.css">
+<script type="module" src="../../_js/page.js"></script>
+</head><body><div class="header"></div><div class="content"><details><summary class="post-summary">BROWSER JS CONSOLE, WEB3, AND BUAS TOKENS [#3]: HOW TO BUY THE VERY FIRST F.A.C.E TOKENS, GEMT9 AND NEMT9</summary><div class="post-body"><br><br>
+<b>MUA KÈN BỰA GEMT9 VÀ NEMT9</b><br>
+<br>
+
+About Web JS Console: mời nhândân nghiêncứu Phần Một của Bài này:<br>
+<br>
+
+<a href="https://an-hoang-trung-tuong-2014.blogspot.com/2023/09/browser-js-console-web3-and-buas-tokens.html" target="_blank">LINK</a><br>
+<br>
+
+About F.A.C.E Tokens Kèn Bựa: mời nhândân nghiêncứu Phần Hai của Bài này:<br>
+<br>
+
+<a href="https://an-hoang-trung-tuong-2014.blogspot.com/2024/10/browser-js-console-web3-and-buas-tokens.html" target="_blank">LINK</a><br>
+<br>
+
+Muốn sởhữu ngay Kèn Bựa, Gemt9 hay Nemt9, mà không muốn moiđào, nhândân không nhấtkhoát phải mua qua các Sàn tiềnmạng tậptrung CEX, hay phi-tậptrung DEX, nhưng khảdĩ mua trựctiếp của người bán, qua sinhthái F.A.C.E Token Bựa, không tốn phí dịchvụ cho Sàn.<br>
+<br>
+
+Người bán Kèn Bựa sẽ Post yêucầu bán Kèn của anh ấy lên Blockchain, cụtỉ là BSC aka BNB Smart Chain, với một Offer ID do anh ấy chọn.<br>
+<br>
+
+Nhândân sẽ mua Kèn Bựa, với chính Offer ID trên, bằng một trong ba phươngthức cănbản sau.<br>
+<br>
+
+<b>MUA KÈN BỰA BẰNG WEB APP: DÙNG VÍ NÓNG METAMASK</b><br>
+<br>
+
+Đây là Web App mua kèn Gemt9, sửdụng tựdo và open-source tại Github:<br>
+<br>
+
+<a href="https://asinerum.github.io/face/gemt9/tools/gemtbuy" target="_blank">GEMT9 BUYER PANEL</a><br>
+<br>
+
+Còn đây là Web App mua kèn Nemt9, cũng sửdụng tựdo và open-source:<br>
+<br>
+
+<a href="https://asinerum.github.io/face/nemt9/tools/nemtbuy" target="_blank">NEMT9 BUYER PANEL</a><br>
+<br>
+
+Nhândân sẽ.<br>
+<br>
+
+1. unlock &amp; connect Metamask Plugin khi được nhắc;<br>
+2. tìm mạng BNB Smart Chain cho Metamask Plugin;<br>
+3. nhập sốhiệu Offer ID của người bán, bấm ENTER;<br>
+4. trasoát thôngtin giácả, thờihiệu, và lượngcung;<br>
+5. nhập sốlượng Gemt9 or Nemt9 muốn mua;<br>
+6. click BUY button phía dưới đáy Panel;<br>
+7. tácnghiệp theo Metamask;<br>
+<br>
+
+<b>MUA KÈN BỰA BẰNG WEB3 JS BỰA CONSOLE: DÙNG VÍ GIẤY CÁNHÂN</b><br>
+<br>
+
+Nhândân sẽ.<br>
+<br>
+
+1. vào Quán Bựa qua any Web Browser;<br>
+2. bật Web JS Console, bằng cách bấm phím F12;<br>
+3. gọi tươngtác Gemt9 or Nemt9 trong JS Console;<br>
+4. import khóa riêng của ví giấy cánhân trong JS Console;<br>
+5. chạy lệnh mua kèn, Gemt9 or Nemt9, trong JS Console;<br>
+6. khi mua thànhcông, chạy lệnh xóa History của JS Console;<br>
+<br>
+
+Bước (3) thựchiện bằng cách chạy lệnh Web3 JS Bựa này:<br>
+<br>
+
+<span style="color:white;background-color:black">&nbsp;startGemtRpc();&nbsp;</span><br>
+<br>
+
+gọi kèn Gemt9, hoặc<br>
+<br>
+
+<span style="color:white;background-color:black">&nbsp;startNemtRpc();&nbsp;</span><br>
+<br>
+
+gọi kèn Nemt9.<br>
+<br>
+
+Bước (4) thựchiện bằng cách chạy lệnh Web3 JS Bựa này:<br>
+<br>
+
+<span style="color:white;background-color:black">&nbsp;importWallet(WALLET_PRIVATE_KEY);&nbsp;</span><br>
+<br>
+
+Vídụ:<br>
+<br>
+
+<span style="color:white;background-color:black">&nbsp;importWallet("DE559FFA39FF042ECB9CFDCAFDDE6C874A716F3C8207A3587213D08778F59785");&nbsp;</span><br>
+<br>
+
+Bước (5) thựchiện bằng cách chạy lệnh Web3 JS Bựa này:<br>
+<br>
+
+<span style="color:white;background-color:black">&nbsp;marketTokenBuyRaw(OFFER_ID,COIN_AMOUNT);&nbsp;</span><br>
+<br>
+
+OFFER_ID là sốhiệu Offer ID của người bán.<br>
+<br>
+
+COIN_AMOUNT là sốlượng BNB dùng mua kèn.<br>
+<br>
+
+Chảdụ, sốhiệu Offer ID bán kèn Gemt9 nhândân đã được cungcấp là "1234", giá bán 20,000 BNB/GEMT9, aka 1 BNB ăn 20,000 Gemt9.<br>
+<br>
+
+Nếu nhândân tính mua 75 Gemt9, thì COIN_AMOUNT phải bằng:<br>
+<br>
+
+75/20000 = 0.00375 BNB<br>
+<br>
+
+Lệnh trên sẽ thành:<br>
+<br>
+
+<i>marketTokenBuyRaw (1234, 0.00375);</i><br>
+<br>
+
+hoặc<br>
+<br>
+
+<i>marketTokenBuyRaw ("1234", "0.00375");</i><br>
+<br>
+
+Bước (6) thựchiện bằng cách chạy lệnh JS Console này:<br>
+<br>
+
+<span style="color:white;background-color:black">&nbsp;clearHistory();&nbsp;</span><br>
+<br>
+
+Lệnh clearHistory luôn quantrọng quá, nó xóa khóa riêng khỏi JS Console.<br>
+<br>
+
+<b>MUA KÈN BỰA BẰNG CLI (COMMAND LINE INTERFACE) TOOLS</b><br>
+<br>
+
+Nhândân thamchiếu thưviện NPM JS của F.A.C.E Token, open-source tại Github:<br>
+<br>
+
+<a href="https://github.com/asinerum/face/tree/main/CLI/node2" target="_blank">F.A.C.E TOKEN MINER CLI REPOSITORY</a><br>
+<br>
+
+Gói /examples của thưviện này có file kịchbản "tobuy.js". File này phụcvụ nhândân mua Kèn Bựa qua giaodiện dònglệnh JavaScript aka CLI. Ngoài ra, gói nó còn có các kịchbản tạo Ví Giấy, múp Còi, múp Kèn, moi Kèn, etc.<br>
+<br>
+
+(còn)<br>
+<br>
+
+*ASINERUM INTERNATIONAL*<br>
+<br>
+
+TÀILIỆU THAMKHẢO<br>
+<a href="https://asinerum.github.io/face/" target="_blank">F.A.C.E TOKEN WHITE PAPER</a><br>
+<a href="https://github.com/asinerum/face" target="_blank">F.A.C.E TOKEN REPOSITORY</a><br>
+<a href="https://www.npmjs.com/package/face-token-miner" target="_blank">F.A.C.E TOKEN MINER PUBLIC LIBRARY</a>
+<p class="post-org-url">
+      <a href="https://an-hoang-trung-tuong-2014.blogspot.com/2024/10/browser-js-console-web3-and-buas-tokens_19.html">@AnHoàngTrungTướng - QuánBựa</a>
+      
+    </p><p class="post-time">19/10/2024 07:00</p><p class="post-label">#Côngnghệ</p><p class="post-comment-count">20 comments</p><p class="first-comment-time">First comment: 19/10/2024 07:35</p><p class="last-comment-time">Last comment: 23/10/2024 01:27</p><p class="post-edited"></p></div></details><div class="post-comment"><details><summary>🗞️ 1</summary><div class="post-comment-page"><div class="comment-block"><div class="comment-header" id="c2030533007713019480"><a href="https://www.blogger.com/profile/06324965406194061835">Asinerum Project Commander</a><i><a href="https://an-hoang-trung-tuong-2014.blogspot.com/2024/10/browser-js-console-web3-and-buas-tokens_19.html#%20c2030533007713019480">(1)</a></i></div><div class="comment-body">Đúng là nòi Bò cáy dcm</div><div class="comment-footer">19/10/2024 07:35</div></div><div class="comment-block"><div class="comment-header" id="c5729821810337743220"><a href="https://www.blogger.com/profile/06324965406194061835">Asinerum Project Commander</a><i><a href="https://an-hoang-trung-tuong-2014.blogspot.com/2024/10/browser-js-console-web3-and-buas-tokens_19.html#%20c5729821810337743220">(2)</a></i></div><div class="comment-body">Ông Sư Ngủ Mẹ Trưa Nay<br><br>[youtube=HOIzRdDo_3I]</div><div class="comment-footer">19/10/2024 21:56</div></div><div class="comment-block"><div class="comment-header" id="c8669618446476026129"><a href="https://www.blogger.com/profile/03421047516706246901">Tiểu Mỡ</a><i><a href="https://an-hoang-trung-tuong-2014.blogspot.com/2024/10/browser-js-console-web3-and-buas-tokens_19.html#%20c8669618446476026129">(3)</a></i></div><div class="comment-body">Offer Id sẽ lấy ở đâu Zy oi<br><br>Giống tạo user hả Zy?</div><div class="comment-footer">19/10/2024 22:09</div></div><div class="comment-block"><div class="comment-header" id="c8174449388593451016"><a href="https://www.blogger.com/profile/06324965406194061835">Asinerum Project Commander</a><i><a href="https://an-hoang-trung-tuong-2014.blogspot.com/2024/10/browser-js-console-web3-and-buas-tokens_19.html#%20c8174449388593451016">(4)</a></i></div><div class="comment-body">Ref: Tiểu Mỡ <a href="https://an-hoang-trung-tuong-2014.blogspot.com/2024/10/browser-js-console-web3-and-buas-tokens_19.html?commentPage=1#c8669618446476026129" rel="nofollow">(3)</a> <br><br>Con bán Kèn sẽ cungcấp ID đó chứ. Zì giảng phía trên gòy mà.<br><br>Còn làm nào đặng đăngkí bán Kèn và có Offer ID, thì Zì sẽ bốt tại phần "Rao Bán Kèn" của bài này.<br><br>Tươngtự, sẽ có các phần "Bán Kèn" và "Rao Mua Kèn". Có người rao-mua, thì mới có Order ID, và nhânndân sẽ bán Kèn mình theo ID đó.<br><br>Cách này thuậntiện và rẻrúng hơn nhiều hơn nhiều so với DEX/CEX vì cả hai phía mua-bán Kèn đều không phải trả phí dịchvụ [cho phường trunggian], chỉ phải trả nhõn Gas Fee, như mọi giaodịch hợpđồng khôn bìnhthường.</div><div class="comment-footer">20/10/2024 00:46</div></div><div class="comment-block"><div class="comment-header" id="c2502616363997999124"><a href="https://www.blogger.com/profile/06324965406194061835">Asinerum Project Commander</a><i><a href="https://an-hoang-trung-tuong-2014.blogspot.com/2024/10/browser-js-console-web3-and-buas-tokens_19.html#%20c2502616363997999124">(5)</a></i></div><div class="comment-body">Ref: Colin <a href="https://an-hoang-trung-tuong-2014.blogspot.com/2024/10/browser-js-console-web3-and-buas-tokens.html?commentPage=1#c321032532934920481" rel="nofollow">(157)</a> <br><br>Zì không khoái môn Teng Lích ấy, nên Zì không đánhgiá cháu nào cả.<br><br>Dcm tuynhiên, trong các môn zâmzục khác, Zì cũng chả baogiờ chọn ra một G.O.A.T, vì điều đó vônghĩa.<br><br>Zì khảdĩ, chọn những cháu chơi rất hay, thậmchí "hay nhất", theo cách nhìn của riêng mình, và không ápđặt cho ai.<br><br>Zì khảdĩ cũng, chửi hănghái Idol của các nhândân nàođó. Chuyện này cũng xuấtphát từ cách nhìn cánhân, và không ápđặt cho ai.<br><br>Nơi tranhđua đấuđá taybo, các dânchơi luôn phải tiến lên. Không baogiờ ngừng. Đời sau nhấtđịnh phải hơn đời trước, nếu có máy thờigian quay ngược cho chúng phạng nhau. Ngược lại, thì môn-chơi chắcchắn suytàn, và cần tuyệtdiệt. <br><br>Vậy, sosánh các đời dânchơi với nhau là điều cựckì vônghĩa.<br><br>Chúng Má khảdĩ sosánh theo số danhhiệu, theo thâmniên hànhnghề, theo cáchthức trấnáp đốithủ của dânchơi trong các cuộcđấu, thậmchí theo bơmvá của báochí tảkhuynh, etc. Zì không ke.</div><div class="comment-footer">20/10/2024 01:01</div></div><div class="comment-block"><div class="comment-header" id="c7720584847051113259"><a href="https://www.blogger.com/profile/06324965406194061835">Asinerum Project Commander</a><i><a href="https://an-hoang-trung-tuong-2014.blogspot.com/2024/10/browser-js-console-web3-and-buas-tokens_19.html#%20c7720584847051113259">(6)</a></i></div><div class="comment-body">Ref: Asinerum Project Commander <a href="https://an-hoang-trung-tuong-2014.blogspot.com/2024/10/browser-js-console-web3-and-buas-tokens_19.html?commentPage=1#c2502616363997999124" rel="nofollow">(5)</a> <br><br>Dcm tại-sao, bọn kềnkền báochí tảkhuynh cứ tựtiện phong cháu này là GOAT, cháu kia suýt là, rồi mơntrớn rất nhiều đốitượng cùng thamgia Phong Goat, rồi mở các cuộc thi Săn Goat, loạnxạ trầngian.<br><br>Zì giảng mãi gòy. Đó là do, bọn media Dòng Chính tảkhuynh "fake-news" tạo Sóng cho nôngphu chơi. Nôngphu càng chơi đông, chúng càng nhiều Vìu, nhiều Xèng. Đấy là mụcđích đời chúng.<br><br>Còn thựctế, chúng đéo baogiờ quantâm ai là Goat. Ai cũng được, với nòi kềnkền tảkhuynh. Nay chúng đềsuất một Goat tiềmnăng. Mai chúng tungxùy một Goat đíchthực. Bài đéo nào chúng cũng biênlách rất tâmtình trautruốt, ngậptràn những thuyếtphục chứngminh.<br><br>Và nôngphu nhảy vào cãi nhau như giết Bò. Riêng vụ tranhluận Idol này, thì muônđời đéo baogiờ có kếtthúc.<br><br>Chết cười. Cú bầubán bíthư Mẽo cách nay 4 mùa. Zì support anh Chăm bạn Zì. Một con Giùn Kìu xứ Nhan nghĩ Zì là Phan của anh ấy. Phan buồi gì ai. Cứ con nào ỉa vào mồm bọn Dânchủ Chó thì Zì support tuốt. Chăm hay Buồi đều được.<br><br>Vậy là hehe, con Kìu Nhan bùng mẹ cơn điên, chửi Zì như Bò, và cút khỏi Quán. Dcm đúng là con Lợn. Già còn mất nết. Hehehe.<br><br>Sựtình thì, chúng Má đoán trúng cmnr đó. Bọn kềnkền tảkhuynh đập Chăm, là một kíchthích khôngthể tốt hơn cho các Sóng nôngphu.</div><div class="comment-footer">20/10/2024 01:18</div></div><div class="comment-block"><div class="comment-header" id="c4759577137531150927"><a href="https://www.blogger.com/profile/06324965406194061835">Asinerum Project Commander</a><i><a href="https://an-hoang-trung-tuong-2014.blogspot.com/2024/10/browser-js-console-web3-and-buas-tokens_19.html#%20c4759577137531150927">(7)</a></i></div><div class="comment-body">Ref: Asinerum Project Commander <a href="https://an-hoang-trung-tuong-2014.blogspot.com/2024/10/browser-js-console-web3-and-buas-tokens_19.html?commentPage=1#c7720584847051113259" rel="nofollow">(6)</a> <br><br>Xaxưa lắm rồi, cách nay mấy thếkỉ, có cháu thợ-banh người xứ Peru hay Bolivia gi Zì quên mẹ, tên Pele.<br><br>Cháu Pele được kềnkền tảkhuynh bơm là G.O.A.T, vua của vua của nghề banh, không baogiờ xuấthiện nữa.<br><br>Chết cười mí kềnkền. Cháu Pele đấy, nếu giờ được gọi vào banh-đoàn Real của Zì, có khi còn đéo được ngồi Bench dựbị, mà phải múp xuống chơi cho Team 2, thậmchí phải bị cho mượn, sang Briton hay Anbion bên Anh Nhợn.<br><br>Nghe nôngphu bắtđầu chánchán cháu Pele (dcm già gần bằng Jesus cmnr, sao không chán), thì kềnkền lại nặn ra, lần này là, tận 2 cháu. Một cháu dân đâu-đó xứ Lan hay Nhan, tên Đô. Cháu kia dân xứ Cumoa hay Batoa đéo-gì, tên Xi.<br><br>Cả hai cháu Xi Đô này đều chơi banh như con Buồi. Đấy là nhậnđịnh của Zì. Chúng Má đừng cãi. Chỉ là nhậnđịnh cánhân của Zì thôi. Và hai cháu ấy cũng không là Bố Đẻ chúng Má đâu, bảovệ cáy con Cặc.<br><br>Vậy là hehe, nôngphu hoànvõ lại được cơn bùngcháy, suốt nửa thếkỉ cmnr. Số nôngphu mê Đô cũng chả kém số mê Xi. Ai cũng muốn Idol của mình là Goat.<br><br>Goat cáy máu be Lồn. Giờ búng hai cháu này vào banh-đoàn Real của Zì, nhẽ chỉ cho đi lau ủng.<br><br>Cơmà kềnkền vẫn đong được cơman xèng. Đó là thenchốt.</div><div class="comment-footer">20/10/2024 01:46</div></div><div class="comment-block"><div class="comment-header" id="c6943553156828838652"><a href="https://www.blogger.com/profile/06324965406194061835">Asinerum Project Commander</a><i><a href="https://an-hoang-trung-tuong-2014.blogspot.com/2024/10/browser-js-console-web3-and-buas-tokens_19.html#%20c6943553156828838652">(8)</a></i></div><div class="comment-body">Ref: Asinerum Project Commander <a href="https://an-hoang-trung-tuong-2014.blogspot.com/2024/10/browser-js-console-web3-and-buas-tokens_19.html?commentPage=1#c5729821810337743220" rel="nofollow">(2)</a> <br><br>Dcm mấy anh hàinhí tíhon này, mà giả giọng ra cả một quả rừng nhiệtđới trong đêm, với đầyđủ chimchóc giun-dế rắn-rít têgiác hàmã hiêu-nai.<br><br>Phục như phết.<br><br>Mùa xaxưa, Zì từng thamgia một quả thi giả tiếng ngựa, của các anh caobồi Mẽo.<br><br>Zì cáy dcm, cũng thọc 3 ngón-tay vào loa, gắng hí như dê. Dcm tiếng của Zì tởm nhất trường thi. Vửa yếu, vửa thộn, vửa hehe đéo giống nether ngựa nor dê nor bò.<br><br>Nhưng ngạcnhiên chưa. Chúng Má đoán sai rồi đó. Zì giành mẹ giải đặcbiệt, được tặng một bát cốctai, một cạt mua bia, một huychương lụa.<br><br>Nguyêndo rất đơngiản. Con thiđấu cùng Zì, địchthủ duynhất, do mót cười, đã không hí được nhát nào. Cơmà con này vẫn giành được "giải vàng", gồm một huychương gấm, một cạt mua xăng, một lon cônhắc.</div><div class="comment-footer">20/10/2024 02:07</div></div><div class="comment-block"><div class="comment-header" id="c4085468831843621382"><a href="https://www.blogger.com/profile/03421047516706246901">Tiểu Mỡ</a><i><a href="https://an-hoang-trung-tuong-2014.blogspot.com/2024/10/browser-js-console-web3-and-buas-tokens_19.html#%20c4085468831843621382">(9)</a></i></div><div class="comment-body">Zy làm nhanh<br><br>Để em cấu thêm ít Nemt9</div><div class="comment-footer">20/10/2024 12:27</div></div><div class="comment-block"><div class="comment-header" id="c8315812889593791881"><a href="https://www.blogger.com/profile/03421047516706246901">Tiểu Mỡ</a><i><a href="https://an-hoang-trung-tuong-2014.blogspot.com/2024/10/browser-js-console-web3-and-buas-tokens_19.html#%20c8315812889593791881">(10)</a></i></div><div class="comment-body">Hôm nay 20/10 ngày Nữ Zùn<br><br>Giờ em mới nhậu về<br><br>Vừa nghe 1 con bảo: chúc em Mỡ ngày nào cũng xinh đẹp rạng rỡ như 20/10<br><br>Em bảo : thế ngày nào anh cũng tặng quà em ha <br><br>🤣🤣 tự dưng con khựng lại <br><br>Bố tổ giả tạo 1 cách trân thành</div><div class="comment-footer">20/10/2024 20:56</div></div><div class="comment-block"><div class="comment-header" id="c4058246173939563089"><a href="https://www.blogger.com/profile/03421047516706246901">Tiểu Mỡ</a><i><a href="https://an-hoang-trung-tuong-2014.blogspot.com/2024/10/browser-js-console-web3-and-buas-tokens_19.html#%20c4058246173939563089">(11)</a></i></div><div class="comment-body">Hôm nay 20/10 ngày Nữ Zùn<br><br>Giờ em mới nhậu về<br><br>Vừa nghe 1 con bảo: chúc em Mỡ ngày nào cũng xinh đẹp rạng rỡ như 20/10<br><br>Em bảo : thế ngày nào anh cũng tặng quà em ha <br><br>🤣🤣 tự dưng con khựng lại <br><br>Bố tổ giả tạo 1 cách trân thành</div><div class="comment-footer">20/10/2024 20:56</div></div><div class="comment-block"><div class="comment-header" id="c758108114024437762"><a href="https://www.blogger.com/profile/03421047516706246901">Tiểu Mỡ</a><i><a href="https://an-hoang-trung-tuong-2014.blogspot.com/2024/10/browser-js-console-web3-and-buas-tokens_19.html#%20c758108114024437762">(12)</a></i></div><div class="comment-body">Nay em và 2 người bạn: 1 trai 1 gái , total : 3 con làm 1 group nói chuyện <br><br>Chủ đề về : sex lần đầu<br><br>Anh con trai người Lâm Đồng bảo : anh lần đầu tại quán cf chòi, với 1 bé 18 tuổi lớp 12 🥹<br><br>Em thì kể : Em 25, tại Cambo<br><br>Bà kia kể : tao lần đầu chả nhớ , nhạt nhẽo<br><br>Xong em có kể về 1 anh miền Tây tán em<br><br>Nhưng anh ý chở em đi chơi rồi nhậu xỉn quá, nên em bỏ về <br><br>Nửa đêm anh Miền Tây nt bảo em ra ngoài cổng : anh cứng lắm rồi <br><br>Em không trả lời, anh Miền Tây nhắn 1 cái tin : chảnh chó<br><br>Anh Lâm Đồng bảo : chuyện tình của em thật lãng xẹt, kết thúc ngay lúc cương cứng <br><br>🤣🤣🤣<br><br>Bổ tổ, bạn mới bè, hèn chi ổng tán được toàn gái 18</div><div class="comment-footer">20/10/2024 21:15</div></div><div class="comment-block"><div class="comment-header" id="c8902799538294536048"><a href="https://www.blogger.com/profile/05193700616221893713">Silk </a><i><a href="https://an-hoang-trung-tuong-2014.blogspot.com/2024/10/browser-js-console-web3-and-buas-tokens_19.html#%20c8902799538294536048">(13)</a></i></div><div class="comment-body">Anh nghe thấy mùi Bòhúc đâuđây. <br>Chúng Bựa đã sẵnsàng súngpháo đặng phạng một mùa Bò oanhoanh liệtliệt chưa?<br><br>[img=https://www.interfax.ru/ftproot/textphotos/2019/07/09/p700.jpg]</div><div class="comment-footer">20/10/2024 22:24</div></div><div class="comment-block"><div class="comment-header" id="c4586208414739656121"><a href="https://www.blogger.com/profile/05193700616221893713">Silk </a><i><a href="https://an-hoang-trung-tuong-2014.blogspot.com/2024/10/browser-js-console-web3-and-buas-tokens_19.html#%20c4586208414739656121">(14)</a></i></div><div class="comment-body">Anh bị mất Tân bởi một "chị" hơn anh 3 tuổi, giờ thì nàng chắc tóc đã điểmbạc mịe rùi huhu</div><div class="comment-footer">20/10/2024 22:27</div></div><div class="comment-block"><div class="comment-header" id="c3968233355329129696"><a href="https://www.blogger.com/profile/05193700616221893713">Silk </a><i><a href="https://an-hoang-trung-tuong-2014.blogspot.com/2024/10/browser-js-console-web3-and-buas-tokens_19.html#%20c3968233355329129696">(15)</a></i></div><div class="comment-body">Ref: Tiểu Mỡ <a href="https://an-hoang-trung-tuong-2014.blogspot.com/2024/10/browser-js-console-web3-and-buas-tokens_19.html?commentPage=1#c758108114024437762" rel="nofollow">(12)</a> <br><br>Năm 18t anh ngủ quađêm với mối tìnhđầu hehe, trầntruồng, và không chịch.</div><div class="comment-footer">20/10/2024 22:30</div></div><div class="comment-block"><div class="comment-header" id="c6390504983861024481"><a href="https://www.blogger.com/profile/10435295038261922043">Ngu Vat</a><i><a href="https://an-hoang-trung-tuong-2014.blogspot.com/2024/10/browser-js-console-web3-and-buas-tokens_19.html#%20c6390504983861024481">(16)</a></i></div><div class="comment-body">Địt mẹ anhoangtrungtuong mặt lồn trâu. <br>Chờ Ngũ niên sách hơn 10 năm chắc Trung - tướng or Hiệu - trưởng lên nóc tủ mẹ rồi huhu.</div><div class="comment-footer">21/10/2024 01:01</div></div><div class="comment-block"><div class="comment-header" id="c4013333737065171195"><a href="https://www.blogger.com/profile/05462267435681438731">mũ rơm</a><i><a href="https://an-hoang-trung-tuong-2014.blogspot.com/2024/10/browser-js-console-web3-and-buas-tokens_19.html#%20c4013333737065171195">(17)</a></i></div><div class="comment-body">Happy monday</div><div class="comment-footer">21/10/2024 11:19</div></div><div class="comment-block"><div class="comment-header" id="c5219560150462004649"><a href="https://www.blogger.com/profile/03421047516706246901">Tiểu Mỡ</a><i><a href="https://an-hoang-trung-tuong-2014.blogspot.com/2024/10/browser-js-console-web3-and-buas-tokens_19.html#%20c5219560150462004649">(18)</a></i></div><div class="comment-body">Em kể nốt đoạn cuối của cuộc đi chơi tại Cambo<br><br>Từ mai, em lại phải vào guồng lại công việc.<br><br>Sau đêm ở Pnom pênh<br><br>Em và con về Q1 ngủ, tụi em thuê cái hô theo có bồn tắm<br><br>2 đứa tắm chung bồn , và lần đầu tiên em biết làm tình trong bồn là như nào?<br><br>Là bồng bềnh bồng bềnh, hehe<br><br>Rồi , tan cuộc chơi<br><br>Em bị ngứa <br><br>Bà mẹ nó, sờ tay còn thầy lợn cợn<br><br>Em hốt hoảng sợt intenet. Resul: bệnh mào gà <br><br>Ôi, toát lạnh mồ hôi, tự nghĩ: sao nhọ vậy trời<br><br>Hôm sau em đi gấp qua bệnh viện kiểm tra<br><br>lang băm vừa đeo găng tay vừa vạch ra xem, chưa được 5 giây<br><br>Bả tháo găng ném vào sọt rác và phán : rách màng trinh, viêm âm đạo do nhiễm tạp khuẩn<br><br>Về uống thuốc 3 ngày <br><br>Em còn hỏi: có nguy hiểm ko ??<br><br>Cổ trả nhời : ai trong đời cũng phải bị 1 lần 🤣🤣🤣<br><br>Em tiện mồm kể : hôm qua chị e sờ thấy lợn cợn em tưởng em bị sao <br>Lang băm nói: muốn nhìn thấy rõ thì đặt cái gương xuống sàn rồi ngồi xổm là soi thấy<br><br>Ồ hóa ra miếng lợn cợn em sờ thấy là cái màng trinh nó rách <br><br>Giờ thì chỗ ý nó nhẵn thín 😅<br><br>Sau chuyến đi ý e tĩnh dưỡng 1 tháng mới hồi được sức , thật là ngựa mới ra đường <br><br>Háu chiến quá <br><br>[img=https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi1NBq2juCFbtHKPzTX5HPUfjv2LvL4Kd796j7vINxq01w2mBZNjG9UeTtaCGUWdHmmFiwI6SXUZgWwDRHvG6Mkm4rkXtBjB7SbylihinFywUUD1HB6X_3zNAf4c14mhL8ieR-__R9lGIa3A-ttOSOwSufdoaEtSzCBfipS9iblNt2VpTsBzzbizP3WC9fz/s565/2E5D58C0-201D-4C7E-B16D-5FF2F81014DB.jpeg]<br><br>❤️❤️❤️❤️</div><div class="comment-footer">21/10/2024 23:46</div></div><div class="comment-block"><div class="comment-header" id="c7655251287392001655"><a href="https://www.blogger.com/profile/11667150944913110287">Ông Cụ</a><i><a href="https://an-hoang-trung-tuong-2014.blogspot.com/2024/10/browser-js-console-web3-and-buas-tokens_19.html#%20c7655251287392001655">(19)</a></i></div><div class="comment-body">Cụ mất tân với một em phò. Lần đầu thì Cụ chỉ đè lên em phò và chưa thụt mà về đã bị ngứa run cả người. Lần sau thì Cụ đeo 2 cái condom và thụt bình thường nên ko sao cả. Thật là một kỷ niệm ko vui chút nào.</div><div class="comment-footer">22/10/2024 22:26</div></div><div class="comment-block"><div class="comment-header" id="c7825796078842208307"><a href="https://www.blogger.com/profile/09288262541641605563">Day-dreaming</a><i><a href="https://an-hoang-trung-tuong-2014.blogspot.com/2024/10/browser-js-console-web3-and-buas-tokens_19.html#%20c7825796078842208307">(20)</a></i></div><div class="comment-body">Ref: Asinerum Project Commander <a href="https://an-hoang-trung-tuong-2014.blogspot.com/2024/10/browser-js-console-web3-and-buas-tokens_19.html?commentPage=1#c7720584847051113259" rel="nofollow">(6)</a> <br><br>Bựa này cũng kì, để Dì cứ nhớ, nhắc mãi<br><br>Quán cũng còn nhiều vụ cắt/ phạt/ chặt nhau đến hờn, để đời luôn.<br>Kiểu như vụ anh gege iu của mìn đe đối tượng xuyên ảo đến thật, vụ Dì bảo cho mượn thêm dao kiếm để 2 phe thực chiến...ui nhớ phết.<br><br>Quán giờ chém phạt nhau cứ nhẹ nhàng e lệ thế nào ấy....rồi cái hồi thô tục đến lợm giọng trước đó nữa chứ...giờ đã xa xăm</div><div class="comment-footer">23/10/2024 01:27</div></div></div></details></div></div><div class="footer"></div></body></html>
