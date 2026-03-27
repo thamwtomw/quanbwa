@@ -278,6 +278,7 @@ function handleBodyClick(e) {
  * 
  */
 document.addEventListener("DOMContentLoaded", () => {
+    headerAlt();
     renderHTMLfromJSON_init();
     document.addEventListener('click', handleBodyClick, false);
 });

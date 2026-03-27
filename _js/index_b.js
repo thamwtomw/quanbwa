@@ -19,7 +19,6 @@ const FOOTER_LINKS = [
 /**
  * Apply style and script
  */
-headerAlt();
 async function headerAlt() {
     // Remove head
     //document.head.innerHTML = '';
@@ -278,6 +277,7 @@ function handleBodyClick(e) {
  * 
  */
 document.addEventListener("DOMContentLoaded", () => {
+    headerAlt();
     renderHTMLfromJSON_init();
     document.addEventListener('click', handleBodyClick, false);
 });

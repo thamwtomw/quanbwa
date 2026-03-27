@@ -19,7 +19,6 @@ const FOOTER_LINKS = [
 /**
  * Apply style and script
  */
-headerAlt();
 async function headerAlt() {
     // Remove head
     //document.head.innerHTML = '';
@@ -860,6 +859,7 @@ urlIdAvatars['ride'] = [`${iconImageLocation}/ride.gif`, 'Homeless Wanderer: Lan
  * 
  */
 document.addEventListener("DOMContentLoaded", () => {
+    headerAlt();
     // Button to toogle post of ZZ and some kol
     initActionMenu();
 
