@@ -777,7 +777,7 @@ function parseBwaStyle(commentBlock) {
                         commentBody.style.color = finalColor;
                     };
                     if (vips[4]) {
-                        commentBody.style.fontFamily = vips[4] === 'GIUN_TAHOMA' ? 'Tahoma, sans-serif' : vips[4];
+                        commentBody.style.fontFamily = vips[4];
                     }
                     break;
                 }
