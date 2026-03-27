@@ -6,6 +6,8 @@ DEFAULT_SLOGAN += '<p>(2012 - 2022) SỐNG DAI SỐNG KHỎE SỐNG TINHHOA CHO 
 DEFAULT_SLOGAN += '<p>(2022-2026) GO FUCK YOURSELF VOVA</p>';
 DEFAULT_SLOGAN += '<p>(2026-) HERE STANDING BESIDE OUR IRANIAN BUDDIES</p>';
 
+const TANKS = 'Thank @LìuTìu, @Anh-Búa(-s), and @ANHOÀNGTRUNGTƯỚNG very mucho</h6><h6>@THĂMTƠM';
+
 
 const FOOTER_LINKS = [
     "http://vn.360plus.yahoo.com/an_hoang_trung_tuong/",
@@ -19,7 +21,6 @@ const FOOTER_LINKS = [
 /**
  * Apply style and script
  */
-headerAlt();
 async function headerAlt() {
     // Remove head
     //document.head.innerHTML = '';
@@ -29,7 +30,7 @@ async function headerAlt() {
         "mobile-web-app-capable": "yes",
         "apple-mobile-web-app-capable": "yes",
         "apple-mobile-web-app-status-bar-style": "default",
-        "apple-mobile-web-app-title": "AHTT (2004-2025)",
+        "apple-mobile-web-app-title": "AHTT",
         "theme-color": "#000"
     };
 
@@ -62,7 +63,7 @@ async function headerAlt() {
 
     // Footer
     if (BODY_FOOTER) {
-        BODY_FOOTER.innerHTML = `<h6>${DEFAULT_SLOGAN}</h6><h6>Thank @LìuTìu, @Anh-Búa(-s), and @ANHOÀNGTRUNGTƯỚNG very mucho</h6><h6>@THĂMTƠM</h6>`;
+        BODY_FOOTER.innerHTML = `<h6>${DEFAULT_SLOGAN}</h6><h6>${TANKS}</h6>`;
         const nav = document.createElement('nav');
         nav.className = 'footer-links';
 
@@ -85,16 +86,19 @@ async function headerAlt() {
  * Fetch JSON
  */
 
-const CURRENT_VERSION = '2026.v1.0'; // Increment this to force a refresh
 
-const STORAGE_KEY = 'JSON_POST_DATA';
-const VERSION_KEY = 'JSON_POST_VERSION';
-const BWA_STORAGE_KEY = 'BWA_DATA';
 
-const JSON_PATH = `../_data/${CURRENT_VERSION}.json`;
+const JSON_PATH = `../_data/full_post.json`;
 const JS_URL = new URL(import.meta.url);
 const JSON_URL = new URL(JSON_PATH, JS_URL);
-//const JSON_URL = 'https://cdn.jsdelivr.net/gh/thamwtomw/quanbwa/_data/2026.v1.0.json';
+
+// Distinct keys for each file's fingerprint
+const STORAGE_KEY = 'JSON_POST_DATA';
+const BWA_STORAGE_KEY = 'BWA_DATA';
+const ETAG_POST_KEY = 'ETAG_JSON_POST';
+const ETAG_BWA_KEY = 'ETAG_BWA_DATA';
+
+//const JSON_URL = 'https://cdn.jsdelivr.net/gh/thamwtomw/quanbwa/_data/full_post.json';
 const BWA_URL = 'https://cdn.jsdelivr.net/gh/asinerum/project/team/buas.json';
 
 let JSON_POST_DATA = [];
@@ -102,76 +106,57 @@ let BWA_DATA = null;
 
 async function fetchJSON() {
     try {
-        const savedVersion = localStorage.getItem(VERSION_KEY);
+        // 1. Get fingerprints from both servers simultaneously
+        const [res1, res2] = await Promise.all([
+            fetch(JSON_URL, { method: 'HEAD' }),
+            fetch(BWA_URL, { method: 'HEAD' })
+        ]);
+
+        const currentPostETag = res1.headers.get('ETag');
+        const currentBwaETag = res2.headers.get('ETag');
+
+        const savedPostETag = localStorage.getItem(ETAG_POST_KEY);
+        const savedBwaETag = localStorage.getItem(ETAG_BWA_KEY);
+
         const cachedPostData = localStorage.getItem(STORAGE_KEY);
         const cachedBwaData = localStorage.getItem(BWA_STORAGE_KEY);
 
-        // Use cached data if version matches
-        if (savedVersion === CURRENT_VERSION && cachedPostData && cachedBwaData) {
+        // 2. Only use cache if BOTH fingerprints match our history
+        if (
+            currentPostETag === savedPostETag && 
+            currentBwaETag === savedBwaETag && 
+            cachedPostData && cachedBwaData
+        ) {
             JSON_POST_DATA = JSON.parse(cachedPostData);
             BWA_DATA = JSON.parse(cachedBwaData);
-            console.log('✅ Loaded data from cache');
             return;
         }
 
-        console.log('📡 Fetching fresh data...');
-
+        // 3. Fetch data for both
         const results = await Promise.allSettled([
-            fetch(JSON_URL).then(res => {
-                if (!res.ok) throw new Error(`HTTP ${res.status}: ${JSON_URL}`);
-                return res.json();
-            }),
-            fetch(BWA_URL).then(res => {
-                if (!res.ok) throw new Error(`HTTP ${res.status}: ${BWA_URL}`);
-                return res.json();
-            })
+            fetch(JSON_URL).then(res => res.ok ? res.json() : Promise.reject()),
+            fetch(BWA_URL).then(res => res.ok ? res.json() : Promise.reject())
         ]);
 
-        let bothSucceeded = true;
-
-        // Handle JSON_POST_DATA
+        // 4. Update individual data and ETags if they succeeded
         if (results[0].status === 'fulfilled') {
             JSON_POST_DATA = results[0].value;
             localStorage.setItem(STORAGE_KEY, JSON.stringify(JSON_POST_DATA));
-        } else {
-            console.warn('❌ Failed to fetch posts JSON:', results[0].reason);
-            bothSucceeded = false;
-
-            // Fallback: try to use old cached data if available
-            if (cachedPostData) {
-                JSON_POST_DATA = JSON.parse(cachedPostData);
-                console.log('⚠️ Using old cached posts data');
-            }
+            localStorage.setItem(ETAG_POST_KEY, currentPostETag);
         }
 
-        // Handle BWA_DATA
         if (results[1].status === 'fulfilled') {
             BWA_DATA = results[1].value;
             localStorage.setItem(BWA_STORAGE_KEY, JSON.stringify(BWA_DATA));
-        } else {
-            console.warn('❌ Failed to fetch BWA data:', results[1].reason);
-            bothSucceeded = false;
-
-            // Fallback: try to use old cached data
-            if (cachedBwaData) {
-                BWA_DATA = JSON.parse(cachedBwaData);
-                console.log('⚠️ Using old cached BWA data');
-            }
-        }
-
-        // Only update version if **both** fetches succeeded
-        if (bothSucceeded) {
-            localStorage.setItem(VERSION_KEY, CURRENT_VERSION);
-            console.log('✅ Data updated and version saved');
+            localStorage.setItem(ETAG_BWA_KEY, currentBwaETag);
         }
 
     } catch (e) {
-        console.error('Unexpected error in fetchJSON():', e);
-        // Final fallback: use whatever is in cache
-        const cachedPost = localStorage.getItem(STORAGE_KEY);
-        const cachedBwa = localStorage.getItem(BWA_STORAGE_KEY);
-        if (cachedPost) JSON_POST_DATA = JSON.parse(cachedPost);
-        if (cachedBwa) BWA_DATA = JSON.parse(cachedBwa);
+        console.error('Network check failed, falling back to cache:', e);
+        const cp = localStorage.getItem(STORAGE_KEY);
+        const cb = localStorage.getItem(BWA_STORAGE_KEY);
+        if (cp) JSON_POST_DATA = JSON.parse(cp);
+        if (cb) BWA_DATA = JSON.parse(cb);
     }
 }
 
