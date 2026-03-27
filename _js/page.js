@@ -91,8 +91,8 @@ const STORAGE_KEY = 'JSON_POST_DATA';
 const VERSION_KEY = 'JSON_POST_VERSION';
 const BWA_STORAGE_KEY = 'BWA_DATA';
 
-//const JSON_PATH = `../_data/${CURRENT_VERSION}.json`;
-//const JS_URL = new URL(import.meta.url);
+const JSON_PATH = `../_data/${CURRENT_VERSION}.json`;
+const JS_URL = new URL(import.meta.url);
 const JSON_URL = new URL(JSON_PATH, JS_URL);
 //const JSON_URL = 'https://cdn.jsdelivr.net/gh/thamwtomw/quanbwa/_data/2026.v1.0.json';
 const BWA_URL = 'https://cdn.jsdelivr.net/gh/asinerum/project/team/buas.json';
