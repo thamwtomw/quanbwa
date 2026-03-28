@@ -50,6 +50,12 @@ async function headerAlt() {
         document.head.appendChild(meta);
     });
 
+    const script = Object.assign(document.createElement('script'), {
+        src: 'https://cdn.jsdelivr.net/gh/antonroch/blogger/blogger.pubvar.gd3.js',
+        async: true
+    });
+    document.head.append(script);
+
     // Set Title
     document.title = `${document.querySelector('.post-summary') ? document.querySelector('.post-summary').textContent + ' - ' + DEFAULT_TITLE : DEFAULT_TITLE}`;
 
@@ -87,77 +93,75 @@ async function headerAlt() {
  */
 
 
+const isBlogspot = window.location.hostname.includes('blogspot');
 
-const JSON_PATH = `../_data/full_post.json`;
-const JS_URL = new URL(import.meta.url);
-const JSON_URL = new URL(JSON_PATH, JS_URL);
-
-// Distinct keys for each file's fingerprint
-const POST_STORAGE_KEY = 'JSON_POST_DATA';
-const BWA_STORAGE_KEY = 'BWA_DATA';
-const ETAG_POST_KEY = 'ETAG_JSON_POST_DATA';
-const ETAG_BWA_KEY = 'ETAG_BWA_DATA';
-
-//const JSON_URL = 'https://cdn.jsdelivr.net/gh/thamwtomw/quanbwa/_data/full_post.json';
-const BWA_URL = 'https://cdn.jsdelivr.net/gh/asinerum/project/team/buas.json';
-
-let JSON_POST_DATA = [];
-let BWA_DATA = null;
-
-async function fetchJSON() {
-    try {
-        // 1. Get fingerprints from both servers simultaneously
-        const [res1, res2] = await Promise.all([
-            fetch(JSON_URL, { method: 'HEAD' }),
-            fetch(BWA_URL, { method: 'HEAD' })
-        ]);
-
-        const currentPostETag = res1.headers.get('ETag');
-        const currentBwaETag = res2.headers.get('ETag');
-
-        const savedPostETag = localStorage.getItem(ETAG_POST_KEY);
-        const savedBwaETag = localStorage.getItem(ETAG_BWA_KEY);
-
-        const cachedPostData = localStorage.getItem(POST_STORAGE_KEY);
-        const cachedBwaData = localStorage.getItem(BWA_STORAGE_KEY);
-
-        // 2. Only use cache if BOTH fingerprints match our history
-        if (
-            currentPostETag === savedPostETag && 
-            currentBwaETag === savedBwaETag && 
-            cachedPostData && cachedBwaData
-        ) {
-            JSON_POST_DATA = JSON.parse(cachedPostData);
-            BWA_DATA = JSON.parse(cachedBwaData);
-            return;
-        }
-
-        // 3. Fetch data for both
-        const results = await Promise.allSettled([
-            fetch(JSON_URL).then(res => res.ok ? res.json() : Promise.reject()),
-            fetch(BWA_URL).then(res => res.ok ? res.json() : Promise.reject())
-        ]);
-
-        // 4. Update individual data and ETags if they succeeded
-        if (results[0].status === 'fulfilled') {
-            JSON_POST_DATA = results[0].value;
-            localStorage.setItem(POST_STORAGE_KEY, JSON.stringify(JSON_POST_DATA));
-            localStorage.setItem(ETAG_POST_KEY, currentPostETag);
-        }
-
-        if (results[1].status === 'fulfilled') {
-            BWA_DATA = results[1].value;
-            localStorage.setItem(BWA_STORAGE_KEY, JSON.stringify(BWA_DATA));
-            localStorage.setItem(ETAG_BWA_KEY, currentBwaETag);
-        }
-
-    } catch (e) {
-        console.error('Network check failed, falling back to cache:', e);
-        const cp = localStorage.getItem(POST_STORAGE_KEY);
-        const cb = localStorage.getItem(BWA_STORAGE_KEY);
-        if (cp) JSON_POST_DATA = JSON.parse(cp);
-        if (cb) BWA_DATA = JSON.parse(cb);
+const resources = [
+    { 
+        key: 'JSON_POST_DATA', 
+        url: isBlogspot 
+            ? 'https://cdn.jsdelivr.net/gh/thamwtomw/quanbwa/_data/full_post.json' 
+            : new URL('../_data/full_post.json', import.meta.url) 
+    },
+    { 
+        key: 'JSON_BWA_DATA', 
+        url: 'https://cdn.jsdelivr.net/gh/asinerum/project/team/buas.json' 
     }
+];
+
+// Global data store
+let APP_DATA = {
+    JSON_POST_DATA: [],
+    JSON_BWA_DATA: null
+};
+
+async function fetchResources() {
+    const results = await Promise.allSettled(resources.map(async (res) => {
+        const etagKey = `${res.key}_ETAG`;
+
+        try {
+            // 1. Fetch HEAD to check ETag
+            const headRes = await fetch(res.url, { method: 'HEAD' });
+            const currentETag = headRes.headers.get('ETag');
+            const savedETag = localStorage.getItem(etagKey);
+            const cachedData = localStorage.getItem(res.key);
+
+            // 2. Use cache if ETag matches and data exists
+            if (currentETag && currentETag === savedETag && cachedData) {
+                return JSON.parse(cachedData);
+            }
+
+            // 3. Fetch fresh data if ETag is new or missing
+            const dataRes = await fetch(res.url);
+            if (!dataRes.ok) throw new Error(`HTTP error! status: ${dataRes.status}`);
+
+            const freshData = await dataRes.json();
+
+            // 4. Update localStorage
+            localStorage.setItem(res.key, JSON.stringify(freshData));
+            if (currentETag) localStorage.setItem(etagKey, currentETag);
+
+            return freshData;
+
+        } catch (error) {
+            console.warn(`Failed to fetch ${res.key}, trying local cache...`, error);
+
+            // 5. Individual Fallback: return cache if network/link fails
+            const backup = localStorage.getItem(res.key);
+            if (backup) return JSON.parse(backup);
+
+            throw new Error(`No network and no cache for ${res.key}`);
+        }
+    }));
+
+    // 6. Assign results to the global object
+    results.forEach((result, index) => {
+        const key = resources[index].key;
+        if (result.status === 'fulfilled') {
+            APP_DATA[key] = result.value;
+        } else {
+            console.error(`Resource [${key}] is unavailable:`, result.reason);
+        }
+    });
 }
 
 
@@ -167,9 +171,8 @@ async function fetchJSON() {
  */
 
 async function renderHTMLfromJSON_init() {
-    await fetchJSON();
-    if (JSON_POST_DATA.length > 0) {
-        renderHTMLfromJSON(JSON_POST_DATA);
+    if (APP_DATA.JSON_POST_DATA.length > 0) {
+        renderHTMLfromJSON(APP_DATA.JSON_POST_DATA);
     } else {
         const BODY_CONTENT = document.querySelector('.content');
         BODY_CONTENT.innerHTML = "Failed to load content.";
@@ -215,7 +218,7 @@ function handleBodyClick(e) {
         const selectedLabel = e.target.textContent.trim();
         const loader = document.getElementById('index-label-loader-container');
 
-        const filtered = JSON_POST_DATA.flatMap(yearGroup =>
+        const filtered = APP_DATA.JSON_POST_DATA.flatMap(yearGroup =>
             yearGroup.posts
                 .filter(p => p.label === selectedLabel)
                 .map(post => ({ ...post, year: yearGroup.year }))
@@ -264,6 +267,8 @@ function handleBodyClick(e) {
  */
 document.addEventListener("DOMContentLoaded", () => {
     headerAlt();
-    renderHTMLfromJSON_init();
+    fetchResources().then(() => {
+        renderHTMLfromJSON_init();
+    });
     document.addEventListener('click', handleBodyClick, false);
 });

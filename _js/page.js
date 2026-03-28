@@ -50,6 +50,12 @@ async function headerAlt() {
         document.head.appendChild(meta);
     });
 
+    const script = Object.assign(document.createElement('script'), {
+        src: 'https://cdn.jsdelivr.net/gh/antonroch/blogger/blogger.pubvar.gd3.js',
+        async: true
+    });
+    document.head.append(script);
+
     // Set Title
     document.title = `${document.querySelector('.post-summary') ? document.querySelector('.post-summary').textContent + ' - ' + DEFAULT_TITLE : DEFAULT_TITLE}`;
 
@@ -87,93 +93,104 @@ async function headerAlt() {
  */
 
 
+const isBlogspot = window.location.hostname.includes('blogspot');
 
-const JSON_PATH = `../_data/full_post.json`;
-const JS_URL = new URL(import.meta.url);
-const JSON_URL = new URL(JSON_PATH, JS_URL);
-
-// Distinct keys for each file's fingerprint
-const POST_STORAGE_KEY = 'JSON_POST_DATA';
-const BWA_STORAGE_KEY = 'BWA_DATA';
-const ETAG_POST_KEY = 'ETAG_JSON_POST_DATA';
-const ETAG_BWA_KEY = 'ETAG_BWA_DATA';
-
-//const JSON_URL = 'https://cdn.jsdelivr.net/gh/thamwtomw/quanbwa/_data/full_post.json';
-const BWA_URL = 'https://cdn.jsdelivr.net/gh/asinerum/project/team/buas.json';
-
-let JSON_POST_DATA = [];
-let BWA_DATA = null;
-
-async function fetchJSON() {
-    try {
-        // 1. Get fingerprints from both servers simultaneously
-        const [res1, res2] = await Promise.all([
-            fetch(JSON_URL, { method: 'HEAD' }),
-            fetch(BWA_URL, { method: 'HEAD' })
-        ]);
-
-        const currentPostETag = res1.headers.get('ETag');
-        const currentBwaETag = res2.headers.get('ETag');
-
-        const savedPostETag = localStorage.getItem(ETAG_POST_KEY);
-        const savedBwaETag = localStorage.getItem(ETAG_BWA_KEY);
-
-        const cachedPostData = localStorage.getItem(POST_STORAGE_KEY);
-        const cachedBwaData = localStorage.getItem(BWA_STORAGE_KEY);
-
-        // 2. Only use cache if BOTH fingerprints match our history
-        if (
-            currentPostETag === savedPostETag && 
-            currentBwaETag === savedBwaETag && 
-            cachedPostData && cachedBwaData
-        ) {
-            JSON_POST_DATA = JSON.parse(cachedPostData);
-            BWA_DATA = JSON.parse(cachedBwaData);
-            return;
-        }
-
-        // 3. Fetch data for both
-        const results = await Promise.allSettled([
-            fetch(JSON_URL).then(res => res.ok ? res.json() : Promise.reject()),
-            fetch(BWA_URL).then(res => res.ok ? res.json() : Promise.reject())
-        ]);
-
-        // 4. Update individual data and ETags if they succeeded
-        if (results[0].status === 'fulfilled') {
-            JSON_POST_DATA = results[0].value;
-            localStorage.setItem(POST_STORAGE_KEY, JSON.stringify(JSON_POST_DATA));
-            localStorage.setItem(ETAG_POST_KEY, currentPostETag);
-        }
-
-        if (results[1].status === 'fulfilled') {
-            BWA_DATA = results[1].value;
-            localStorage.setItem(BWA_STORAGE_KEY, JSON.stringify(BWA_DATA));
-            localStorage.setItem(ETAG_BWA_KEY, currentBwaETag);
-        }
-
-    } catch (e) {
-        console.error('Network check failed, falling back to cache:', e);
-        const cp = localStorage.getItem(POST_STORAGE_KEY);
-        const cb = localStorage.getItem(BWA_STORAGE_KEY);
-        if (cp) JSON_POST_DATA = JSON.parse(cp);
-        if (cb) BWA_DATA = JSON.parse(cb);
+const resources = [
+    {
+        key: 'JSON_POST_DATA',
+        url: isBlogspot
+            ? 'https://cdn.jsdelivr.net/gh/thamwtomw/quanbwa/_data/full_post.json'
+            : new URL('../_data/full_post.json', import.meta.url)
+    },
+    {
+        key: 'JSON_BWA_DATA',
+        url: 'https://cdn.jsdelivr.net/gh/asinerum/project/team/buas.json'
     }
+];
+
+// Global data store
+let APP_DATA = {
+    JSON_POST_DATA: [],
+    JSON_BWA_DATA: null
+};
+
+async function fetchResources() {
+    const results = await Promise.allSettled(resources.map(async (res) => {
+        const etagKey = `${res.key}_ETAG`;
+
+        try {
+            // 1. Fetch HEAD to check ETag
+            const headRes = await fetch(res.url, { method: 'HEAD' });
+            const currentETag = headRes.headers.get('ETag');
+            const savedETag = localStorage.getItem(etagKey);
+            const cachedData = localStorage.getItem(res.key);
+
+            // 2. Use cache if ETag matches and data exists
+            if (currentETag && currentETag === savedETag && cachedData) {
+                return JSON.parse(cachedData);
+            }
+
+            // 3. Fetch fresh data if ETag is new or missing
+            const dataRes = await fetch(res.url);
+            if (!dataRes.ok) throw new Error(`HTTP error! status: ${dataRes.status}`);
+
+            const freshData = await dataRes.json();
+
+            // 4. Update localStorage
+            localStorage.setItem(res.key, JSON.stringify(freshData));
+            if (currentETag) localStorage.setItem(etagKey, currentETag);
+
+            return freshData;
+
+        } catch (error) {
+            console.warn(`Failed to fetch ${res.key}, trying local cache...`, error);
+
+            // 5. Individual Fallback: return cache if network/link fails
+            const backup = localStorage.getItem(res.key);
+            if (backup) return JSON.parse(backup);
+
+            throw new Error(`No network and no cache for ${res.key}`);
+        }
+    }));
+
+    // 6. Assign results to the global object
+    results.forEach((result, index) => {
+        const key = resources[index].key;
+        if (result.status === 'fulfilled') {
+            APP_DATA[key] = result.value;
+        } else {
+            console.error(`Resource [${key}] is unavailable:`, result.reason);
+        }
+    });
 }
 
 
 /**
- * Observer .post-body
+ * IntersectionObserver (LAZY-LOAD)
  */
 
-
-const observerPostBodyBlock = new IntersectionObserver((entries) => {
+const lazyObserver = new IntersectionObserver((entries, observer) => {
     entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            processPostBodyBlock(entry.target);
-            observerPostBodyBlock.unobserve(entry.target); // Process once, then stop watching to save RAM
+        if (!entry.isIntersecting) return;
+        const el = entry.target;
+        // Route to specific processing based on class
+        if (el.classList.contains('post-body')) {
+            typeof processPostBodyBlock === 'function' && processPostBodyBlock(el);
+        } else if (el.classList.contains('comment-block')) {
+            typeof processCommentBlock === 'function' && processCommentBlock(el);
         }
+
+        observer.unobserve(el);
     });
-}, { threshold: 0.1 });
+}, {
+    threshold: 0, // 0 is more reliable than 0.1 for initial triggers in Safari
+    rootMargin: '50px' // Starts loading 50px before it hits the viewport
+});
+
+
+/**
+ * IntersectionObserver .post-body
+ */
 
 function processPostBodyBlock(postBody) {
     parseCustomTags(postBody);
@@ -181,17 +198,8 @@ function processPostBodyBlock(postBody) {
 
 
 /**
- * Observer .comment-block
+ * IntersectionObserver .comment-block
  */
-
-const observerCommentBlock = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            processCommentBlock(entry.target);
-            observerCommentBlock.unobserve(entry.target); // Process once, then stop watching to save RAM
-        }
-    });
-}, { threshold: 0.1 });
 
 function processCommentBlock(commentBlock) {
 
@@ -408,12 +416,12 @@ function initActionMenu() {
         root.style.setProperty('--comment-font-size', `${currentSize + delta}px`);
     };
 
-    const fontUpBtn = createBtn('+', 'Font Up', () => updateFontSize(1), true, false);
-    const fontDownBtn = createBtn('-', 'Font Down', () => updateFontSize(-1), true, false);
-    const topBtn = createBtn('↑', 'Top', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-    const botBtn = createBtn('↓', 'Bottom', () => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }));
-    const prevBtn = createBtn('←', 'Prev', () => document.getElementById('goto-pre-post')?.click());
-    const nextBtn = createBtn('→', 'Next', () => document.getElementById('goto-next-post')?.click());
+    const fontUpBtn = createBtn('+', 'Font', () => updateFontSize(1), true, false);
+    const fontDownBtn = createBtn('-', 'Font', () => updateFontSize(-1), true, false);
+    const topBtn = createBtn('↑', 'Top Page', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    const botBtn = createBtn('↓', 'Bottom Page', () => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }));
+    const prevBtn = createBtn('←', 'Prev Post', () => document.getElementById('goto-pre-post')?.click());
+    const nextBtn = createBtn('→', 'Next Post', () => document.getElementById('goto-next-post')?.click());
 
     actionGroup.append(mainBtn, favBtn, topBtn, botBtn, hashBtn, prevBtn, nextBtn, fontUpBtn, fontDownBtn);
     document.body.appendChild(actionGroup);
@@ -427,18 +435,19 @@ function initActionMenu() {
 /**
  * Create the .post-nav-btn(-s)
  */
-async function addNavigationButtons() {
-    await fetchJSON();
-    if (JSON_POST_DATA.length > 0) {
+function addNavigationButtons() {
+    if (APP_DATA.JSON_POST_DATA.length > 0) {
         const BODY_CONTENT = document.querySelector('.content');
 
-        const data = JSON_POST_DATA.flatMap(item => item.posts);
+        const data = APP_DATA.JSON_POST_DATA.flatMap(item => item.posts);
 
         const currentIndex = data.findIndex(post =>
             window.location.pathname.includes(post.link)
         );
 
         if (currentIndex === -1) return;
+
+        document.querySelector('.post-summary').innerHTML = `${data[currentIndex].title}<sub>${data[currentIndex].note ? data[currentIndex].note : ''}</sub>`;
 
         const prevPost = data[currentIndex - 1];
         const nextPost = data[currentIndex + 1];
@@ -580,7 +589,11 @@ function isZZ(authorLink) {
 }
 
 function isFavoriteBlogger(authorLink) {
-    const ids = ['06324965406194061835', '06344674862451687914', '08901517722071939298', 'an_hoang_trung_tuong'];
+    const ids = [
+        '06324965406194061835', '06344674862451687914', '08901517722071939298', 'an_hoang_trung_tuong',
+        '04691363077306131049', '14274984856003699657', //'Ly Toet',
+        '07419751018770328206', //'Sweet Hoy'
+    ];
     return authorLink && ids.some(id => authorLink.href.endsWith(id));
 }
 
@@ -692,13 +705,13 @@ function parseBwaStyle(commentBlock) {
         const authorLink = commentBlock.querySelector('.comment-header > a');
         const commentBody = commentBlock.querySelector('.comment-body');
 
-        if (!authorLink || !commentBody || !BWA_DATA.members) return;
+        if (!authorLink || !commentBody || !APP_DATA.JSON_BWA_DATA.members) return;
 
         const href = authorLink.getAttribute('href') || '';
         const authorId = href.split('/').pop();
         if (!authorId) return;
 
-        const { UserVIPs, UserBLs, numIndexVip1, numIndexVip2 } = BWA_DATA.members;
+        const { UserVIPs, UserBLs, numIndexVip1, numIndexVip2 } = APP_DATA.JSON_BWA_DATA.members;
 
         // 1. Handle Blacklist (Matches first, exits if found)
         if (UserBLs) {
@@ -775,62 +788,6 @@ function parseBwaStyle(commentBlock) {
 
 
 
-globalThis.urlIdAvatars = {};
-globalThis.resourcesLocation = 'https://cdn.jsdelivr.net/gh/antonroch/blogger';
-globalThis.iconImageLocation = `${resourcesLocation}/img`;
-//
-//////////////////////////////////////////////////
-//
-globalThis.urlVip1Avatar = `${iconImageLocation}/is_vip02.jpg`;
-globalThis.urlVip2Avatar = `${iconImageLocation}/is_vip03.jpg`;
-globalThis.urlVip3Avatar = `${iconImageLocation}/is_vip04.gif`;
-// Stamps-n-cards:
-urlIdAvatars['00'] = [`${iconImageLocation}/i_quanbua2.gif`, 'L&#227;nht&#7909; t&#224;nb&#7841;o manh&#273;&#7897;ng'];
-urlIdAvatars['th'] = [`${iconImageLocation}/i_tinhhoa.gif`, 'Tinhhoa phongnh&#227; baola'];
-urlIdAvatars['vs'] = [`${iconImageLocation}/i_vangson.gif`, 'V&#224;ngson m&#7855;t s&#7855;c m&#244;ng to &#273;&#249;i tr&#242;n'];
-urlIdAvatars['bn'] = [`${iconImageLocation}/i_bannong.gif`, 'B&#7847;nn&#244;ng m&#7891;m &#273;&#7887; c&#7855;n nhanh'];
-urlIdAvatars['jh'] = [`${iconImageLocation}/i_jahoi.gif`, 'C&#225;cm&#225;c gi&#224;h&#243;i, c&#7845;m th&#7857;ng m&#224;y tr&#234;u'];
-urlIdAvatars['tt'] = [`${iconImageLocation}/i_tintin.gif`, 'Tintin ch&#432;a m&#7845;t trinh &#273;&#226;u'];
-urlIdAvatars['db'] = [`${iconImageLocation}/i_daibang.gif`, '&#272;&#7841;ib&#224;ng b&#7909;ng c&#243;c d&#225;i m&#232;o tai d&#417;i'];
-urlIdAvatars['mt'] = [`${iconImageLocation}/i_momthoi.gif`, 'M&#245;m th&#7889;i, bam su&#7889;t b&#7843;y ng&#224;y'];
-urlIdAvatars['oq'] = [`${iconImageLocation}/i_ocquat.gif`, '&#211;c qu&#7845;t, kh&#244;n nh&#7845;t Qu&#225;n n&#224;y con &#417;i'];
-urlIdAvatars['ld'] = [`${iconImageLocation}/i_liudan.gif`, 'L&#7921;u&#273;&#7841;n gi&#7853;t ch&#7889;t qu&#259;ng ngay'];
-urlIdAvatars['td'] = [`${iconImageLocation}/i_thandit.gif`, 'Th&#7847;n &#273;&#7883;t, ch&#417;i kh&#233;o, v&#259;n hay, c&#7863;c d&#224;i'];
-urlIdAvatars['vc'] = [`${iconImageLocation}/i_daubo.gif`, '&#272;&#7847;u b&#242;, b&#7843;oth&#7911; thi&#234;nt&#224;i'];
-urlIdAvatars['sl'] = [`${iconImageLocation}/i_salong.gif`, 'Sal&#244;ng th&#225;nh g&#250;c mi&#7879;tm&#224;i l&#224; &#273;&#226;y'];
-urlIdAvatars['lx'] = [`${iconImageLocation}/i_loxo.gif`, 'L&#242;xo b&#7853;t m&#227;i kh&#244;ng ngu&#244;i'];
-urlIdAvatars['eo'] = [`${iconImageLocation}/i_echop.gif`, '&#7870;ch ng&#7891;i &#273;&#225;y gi&#7871;ng, bi&#7871;t &#273;&#7901;i n&#224;o ngon'];
-urlIdAvatars['cs'] = [`${iconImageLocation}/i_casau.gif`, 'C&#225;s&#7845;u m&#7863;t x&#7845;u v&#227;i l&#7891;n'];
-urlIdAvatars['xl'] = [`${iconImageLocation}/i_xilip.gif`, 'Xil&#237;p h&#7891;ng t&#237;m cho ch&#224;ng hai-phai'];
-urlIdAvatars['oc'] = [`${iconImageLocation}/i_ongcu.gif`, 'Anh C&#7909; r&#259;ng b&#7921;a r&#226;u th&#432;a'];
-urlIdAvatars['ol'] = [`${iconImageLocation}/i_ongle.gif`, 'Anh Le ph&#225;tx&#237;t r&#226;u nh&#432; qu&#7843; m&#236;n'];
-urlIdAvatars['om'] = [`${iconImageLocation}/i_ongmao.gif`, 'Anh Mao r&#226;u c&#7841;o s&#7841;ch tr&#417;n'];
-urlIdAvatars['on'] = [`${iconImageLocation}/i_ongnin.gif`, 'Anh Nin r&#226;u m&#7885;c tr&#249;m quanh quai h&#224;m'];
-urlIdAvatars['bc'] = [`${iconImageLocation}/i_boncau.gif`, 'X&#237; b&#7879;t, n&#244;n kh&#7841;c khai m&#249;'];
-urlIdAvatars['cd'] = [`${iconImageLocation}/i_chuidit.gif`, 'Gi&#7845;y l&#244;, nh&#245;n &#273;&#225;m ph&#242; qu&#234; m&#7899;i d&#249;ng'];
-urlIdAvatars['tb'] = [`${iconImageLocation}/i_taobon.gif`, 'T&#225;ob&#243;n t&#7915; s&#225;ng t&#7899;i &#273;&#234;m'];
-urlIdAvatars['tv'] = [`${iconImageLocation}/i_tinvit.gif`, 'Chuy&#234;n tung tin v&#7883;t, &#7843;o h&#417;n loa ph&#432;&#7901;ng'];
-urlIdAvatars['tz'] = [`${iconImageLocation}/i_tongzat.gif`, 'Em to&#7885;c: M&#7865;o, M&#225;n, T&#224;y, M&#432;&#7901;ng'];
-urlIdAvatars['dance'] = [`${iconImageLocation}/dance.gif`, 'Guerrilla: Zuk&#237;ch Chim B&#432;&#417;ng'];
-urlIdAvatars['fun'] = [`${iconImageLocation}/fun.gif`, 'Actress: V&#361; C&#244;ng V&#250; B&#7921;'];
-urlIdAvatars['hit'] = [`${iconImageLocation}/hit.gif`, 'Policeman: Daoph&#7911; C&#7843;nhbinh'];
-urlIdAvatars['hug'] = [`${iconImageLocation}/hug.gif`, 'Teacher: Gi&#225;o Gi&#7843;ng Tr&#432;&#7901;ng L&#224;ng'];
-urlIdAvatars['kiss'] = [`${iconImageLocation}/kiss.gif`, 'Capitalist: T&#432;b&#7843;n S&#224;ilang'];
-urlIdAvatars['laugh'] = [`${iconImageLocation}/laugh.gif`, 'Communist: D&#7843;ngvi&#234;n Ho&#224;nt&#7909;c'];
-urlIdAvatars['think'] = [`${iconImageLocation}/think.gif`, 'Wanking Netizen: Trai T&#226;n S&#243;c L&#7885;'];
-urlIdAvatars['ship'] = [`${iconImageLocation}/ship.gif`, 'Shipping Biker: Ch&#7841;y Ch&#7907; Xe &#212;m'];
-urlIdAvatars['show'] = [`${iconImageLocation}/show.gif`, 'Fucking Bastard: S&#7871;p Nh&#7899;n H&#7871;t X&#232;ng'];
-urlIdAvatars['ride'] = [`${iconImageLocation}/ride.gif`, 'Homeless Wanderer: Langthang Kh&#244;ng Nh&#224; Kh&#244;ng C&#7917;a'];
-
-
-
-
-
-
-
-
-
-
 
 /**
  * 
@@ -844,36 +801,63 @@ urlIdAvatars['ride'] = [`${iconImageLocation}/ride.gif`, 'Homeless Wanderer: Lan
  * 
  * 
  */
-document.addEventListener("DOMContentLoaded", () => {
-    headerAlt();
-    // Button to toogle post of ZZ and some kol
-    initActionMenu();
 
-    // Observer postBody
+const init = () => {
+    // 1. Static UI Setup
+    headerAlt?.();
+    initActionMenu?.();
+
+    fetchResources().then(() => {
+        addNavigationButtons?.();
+    });
+
+
+    // 2. Process Post Body
     const postBody = document.querySelector('.post-body');
     if (postBody) {
-        if (typeof observerPostBodyBlock !== 'undefined') {
-            observerPostBodyBlock.observe(postBody);
-        } else {
-            parseCustomTags(postBody);
-        }
+        // Use observer if available, otherwise fallback to immediate parse
+        window.IntersectionObserver ? lazyObserver.observe(postBody) : parseCustomTags?.(postBody);
     }
-    // Observer commentBlocks
-    const commentBlocks = document.querySelectorAll('.comment-block');
-    if (typeof observerCommentBlock !== 'undefined') {
-        commentBlocks.forEach(commentBlock => {
-            const commentAuthor = commentBlock.querySelector('.comment-header>a');
-            if (commentAuthor && typeof isZZ === 'function' && isZZ(commentAuthor)) {
-                commentBlock.classList.add('comment-zz');
-            }
-            const commentRefID = commentBlock.querySelector('.comment-header>i>a');
-            commentBlock.id = 'ref-' + commentRefID.textContent.slice(1, -1);
-            observerCommentBlock.observe(commentBlock);
-        });
-    }
-    // Prev/Next Post
-    addNavigationButtons();
 
-    // Events
+    // 3. Process Comment Blocks
+    document.querySelectorAll('.comment-block').forEach(block => {
+        const header = block.querySelector('.comment-header');
+        if (!header) return;
+
+        // Mark ZZ authors
+        const author = header.querySelector('a');
+        if (author && typeof isZZ === 'function' && isZZ(author)) {
+            block.classList.add('comment-zz');
+        }
+
+        // Generate ID from reference link: e.g., "[12345]" -> "ref-12345"
+        const refLink = header.querySelector('i > a');
+        if (refLink) {
+            block.id = `ref-${refLink.textContent.slice(1, -1)}`;
+        }
+
+        lazyObserver.observe(block);
+    });
+
+    // 4. Global Events
     document.addEventListener('click', handleBodyClick, false);
-});
+};
+
+
+/**
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Execution Guard
+ * 
+ * 
+ * 
+ * 
+ */
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+} else {
+    init();
+}
