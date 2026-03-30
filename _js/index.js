@@ -1,4 +1,5 @@
-const DEFAULT_TITLE = 'Archive of QUÁN BỰA -  AN HOÀNG TRUNG TƯỚNG';
+const DEFAULT_TITLE = ' AN HOÀNG TRUNG TƯỚNG QUÁN BỰA archive',
+    DEFAULT_HEADER = '<h2>AN HOÀNG TRUNG TƯỚNG<br>QUÁN BỰA <sub>(archive)</sub></h2>';
 
 var DEFAULT_SLOGAN = '<p>(2008 - 2009) Quán Bựa của công dân ngoan hiền An Hoàng Trung Tướng chầu mừng các Ông Lừa Bà Lừa</p>';
 DEFAULT_SLOGAN += '<p>(2009 - 2012) Ở đây có những thông tin mà đồng chí nào chưa đủ chín chắn và khách quan để đọc và ngẫm nghĩ về chúng một cách thấu đáo và nghiêm túc hoàn toàn không nên liếc qua</p>';
@@ -6,7 +7,7 @@ DEFAULT_SLOGAN += '<p>(2012 - 2022) SỐNG DAI SỐNG KHỎE SỐNG TINHHOA CHO 
 DEFAULT_SLOGAN += '<p>(2022-2026) GO FUCK YOURSELF VOVA</p>';
 DEFAULT_SLOGAN += '<p>(2026-) HERE STANDING BESIDE OUR IRANIAN BUDDIES</p>';
 
-const TANKS = 'Thank @LìuTìu, @Anh-Búa(-s), and @ANHOÀNGTRUNGTƯỚNG very mucho</h6><h6>@THĂMTƠM';
+const TANKS = '<p>Thank @LìuTìu, @Anh-Búa(-s), and @ANHOÀNGTRUNGTƯỚNG very mucho</p><p>THĂMTƠM</p>';
 
 
 const FOOTER_LINKS = [
@@ -64,12 +65,12 @@ async function headerAlt() {
         BODY_FOOTER = document.querySelector('.footer');
     // Set Body Header
     if (BODY_HEADER) {
-        BODY_HEADER.innerHTML = `<h2><a href="../../">${DEFAULT_TITLE}</a></h2>`;
+        BODY_HEADER.innerHTML = `<a>${DEFAULT_HEADER}</a>`;
     }
 
     // Footer
     if (BODY_FOOTER) {
-        BODY_FOOTER.innerHTML = `<h6>${DEFAULT_SLOGAN}</h6><h6>${TANKS}</h6>`;
+        BODY_FOOTER.innerHTML = `<h6>${DEFAULT_SLOGAN}</h6><h6 style="direction: rtl;">${TANKS}</h6>`;
         const nav = document.createElement('nav');
         nav.className = 'footer-links';
 
@@ -96,15 +97,15 @@ async function headerAlt() {
 const isBlogspot = window.location.hostname.includes('blogspot');
 
 const resources = [
-    { 
-        key: 'JSON_POST_DATA', 
-        url: isBlogspot 
-            ? 'https://cdn.jsdelivr.net/gh/thamwtomw/quanbwa/_data/full_post.json' 
-            : new URL('../_data/full_post.json', import.meta.url) 
+    {
+        key: 'JSON_POST_DATA',
+        url: isBlogspot
+            ? 'https://cdn.jsdelivr.net/gh/thamwtomw/quanbwa/_data/full_post.json'
+            : new URL('../_data/full_post.json', import.meta.url)
     },
-    { 
-        key: 'JSON_BWA_DATA', 
-        url: 'https://cdn.jsdelivr.net/gh/asinerum/project/team/buas.json' 
+    {
+        key: 'JSON_BWA_DATA',
+        url: 'https://cdn.jsdelivr.net/gh/asinerum/project/team/buas.json'
     }
 ];
 
@@ -170,40 +171,29 @@ async function fetchResources() {
  * Render HTML from JSON
  */
 
-async function renderHTMLfromJSON_init() {
-    if (APP_DATA.JSON_POST_DATA.length > 0) {
-        renderHTMLfromJSON(APP_DATA.JSON_POST_DATA);
-    } else {
-        const BODY_CONTENT = document.querySelector('.content');
-        BODY_CONTENT.innerHTML = "Failed to load content.";
-    }
-}
-
 function renderHTMLfromJSON(data) {
     const BODY_CONTENT = document.querySelector('.content');
     BODY_CONTENT.innerHTML = `
-        <div class="content">
-            <div id="index-content-container">
-                ${data.map(item => `
-                <div class="index-year">
-                    <h2 class="index-year-posts">${item.year} <sub class="index-post-count">${item.posts.length} posts</sub></h2>
-                    ${item.note ? `<h5 class="index-year-note index-deactive">${item.note}</h5>` : ''}
-                    ${item.posts.map(post => `
-                        <div class="index-post index-deactive">
-                            <div class="index-post-tag">
-                                <sup class="index-post-date">${post.date}/${item.year}</sup>
-                                <sub class="index-post-label">${post.label}</sub>
-                            </div>
-                            <div class="index-post-link">
-                                <a href="${post.link}">${post.title}</a>
-                                ${post.note ? `<sub class="index-post-note">(${post.note})</sub>` : ''}
-                            </div>
+        <div id="index-content-container">
+            ${data.map(item => `
+            <div class="index-year">
+                <h2 class="index-year-posts">${item.year} <sub class="index-post-count">${item.posts.length} posts</sub></h2>
+                ${item.note ? `<h5 class="index-year-note index-deactive">${item.note}</h5>` : ''}
+                ${item.posts.map(post => `
+                    <div class="index-post index-deactive">
+                        <div class="index-post-tag">
+                            <sup class="index-post-date">${post.date}/${item.year}</sup>
+                            <sub class="index-post-label">${post.label}</sub>
                         </div>
-                    `).join('')}
-                </div>`).join('')}
-            </div>
-            <div id="index-label-loader-container"></div>
-        </div>`;
+                        <div class="index-post-link">
+                            <a href="${post.link}">${post.title}</a>
+                            ${post.note ? `<sub class="index-post-note">(${post.note})</sub>` : ''}
+                        </div>
+                    </div>
+                `).join('')}
+            </div>`).join('')}
+        </div>
+        <div id="index-label-loader-container"></div>`;
 }
 
 function handleBodyClick(e) {
@@ -268,7 +258,12 @@ function handleBodyClick(e) {
 document.addEventListener("DOMContentLoaded", () => {
     headerAlt();
     fetchResources().then(() => {
-        renderHTMLfromJSON_init();
+        if (APP_DATA.JSON_POST_DATA.length > 0) {
+            renderHTMLfromJSON(APP_DATA.JSON_POST_DATA);
+        } else {
+            const BODY_CONTENT = document.querySelector('.content');
+            BODY_CONTENT.innerHTML = "Failed to load content.";
+        }
     });
     document.addEventListener('click', handleBodyClick, false);
 });

@@ -1,4 +1,5 @@
-const DEFAULT_TITLE = 'Archive of QUÁN BỰA -  AN HOÀNG TRUNG TƯỚNG';
+const DEFAULT_TITLE = ' AN HOÀNG TRUNG TƯỚNG QUÁN BỰA archive',
+    DEFAULT_HEADER = '<h2>AN HOÀNG TRUNG TƯỚNG<br>QUÁN BỰA <sub>(archive)</sub></h2>';
 
 var DEFAULT_SLOGAN = '<p>(2008 - 2009) Quán Bựa của công dân ngoan hiền An Hoàng Trung Tướng chầu mừng các Ông Lừa Bà Lừa</p>';
 DEFAULT_SLOGAN += '<p>(2009 - 2012) Ở đây có những thông tin mà đồng chí nào chưa đủ chín chắn và khách quan để đọc và ngẫm nghĩ về chúng một cách thấu đáo và nghiêm túc hoàn toàn không nên liếc qua</p>';
@@ -6,7 +7,7 @@ DEFAULT_SLOGAN += '<p>(2012 - 2022) SỐNG DAI SỐNG KHỎE SỐNG TINHHOA CHO 
 DEFAULT_SLOGAN += '<p>(2022-2026) GO FUCK YOURSELF VOVA</p>';
 DEFAULT_SLOGAN += '<p>(2026-) HERE STANDING BESIDE OUR IRANIAN BUDDIES</p>';
 
-const TANKS = 'Thank @LìuTìu, @Anh-Búa(-s), and @ANHOÀNGTRUNGTƯỚNG very mucho</h6><h6>@THĂMTƠM';
+const TANKS = '<p>Thank @LìuTìu, @Anh-Búa(-s), and @ANHOÀNGTRUNGTƯỚNG very mucho</p><p>THĂMTƠM</p>';
 
 
 const FOOTER_LINKS = [
@@ -64,12 +65,12 @@ async function headerAlt() {
         BODY_FOOTER = document.querySelector('.footer');
     // Set Body Header
     if (BODY_HEADER) {
-        BODY_HEADER.innerHTML = `<h2><a href="../../">${DEFAULT_TITLE}</a></h2>`;
+        BODY_HEADER.innerHTML = `<a href="../../">${DEFAULT_HEADER}</a>`;
     }
 
     // Footer
     if (BODY_FOOTER) {
-        BODY_FOOTER.innerHTML = `<h6>${DEFAULT_SLOGAN}</h6><h6>${TANKS}</h6>`;
+        BODY_FOOTER.innerHTML = `<h6>${DEFAULT_SLOGAN}</h6><h6 style="direction: rtl;">${TANKS}</h6>`;
         const nav = document.createElement('nav');
         nav.className = 'footer-links';
 
@@ -216,8 +217,7 @@ function processCommentBlock(commentBlock) {
         // 1. Create and add the p.footer-post-tittle
         const postTitle = document.createElement('p');
         postTitle.classList.add('footer-post-tittle');
-        postTitle.textContent = document.querySelector('.post-summary')?.textContent ||
-            document.querySelector('.post-title')?.textContent || '';
+        postTitle.textContent = document.querySelector('.post-item-row.active .post-item-link')?.textContent || '';
         commentFooter.appendChild(postTitle);
     }
 }
@@ -410,22 +410,55 @@ function initActionMenu() {
         }
     });
 
-    const updateFontSize = (delta) => {
-        const root = document.documentElement;
-        const currentSize = parseInt(getComputedStyle(root).getPropertyValue('--comment-font-size')) || 18;
-        root.style.setProperty('--comment-font-size', `${currentSize + delta}px`);
-    };
-
-    const fontUpBtn = createBtn('+', 'Font', () => updateFontSize(1), true, false);
-    const fontDownBtn = createBtn('-', 'Font', () => updateFontSize(-1), true, false);
-    const topBtn = createBtn('↑', 'Top Page', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-    const botBtn = createBtn('↓', 'Bottom Page', () => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }));
+    const fontUpBtn = createBtn('A+', '', () => handleBodyTextSizeChange(1), true, false);
+    const fontDownBtn = createBtn('A-', '', () => handleBodyTextSizeChange(-1), true, false);
+    const topBtn = createBtn('↑', 'Top', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    const botBtn = createBtn('↓', 'Bottom', () => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }));
     const prevBtn = createBtn('←', 'Prev Post', () => document.getElementById('goto-pre-post')?.click());
     const nextBtn = createBtn('→', 'Next Post', () => document.getElementById('goto-next-post')?.click());
 
     actionGroup.append(mainBtn, favBtn, topBtn, botBtn, hashBtn, prevBtn, nextBtn, fontUpBtn, fontDownBtn);
     document.body.appendChild(actionGroup);
 }
+
+
+/**
+ * Sets 'commentBodyTextSize' for 30 days
+ * in cookie and applies it to the root CSS variable --comment-body-text-size
+ */
+const saveBodyTextSizeToCookie = (size) => {
+    const d = new Date();
+    d.setTime(d.getTime() + (30 * 24 * 60 * 60 * 1000));
+    document.cookie = `commentBodyTextSize=${size};expires=${d.toUTCString()};path=/;SameSite=Lax`;
+};
+
+const getBodyTextSizeFromCookie = () => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; commentBodyTextSize=`);
+
+    if (parts.length === 2) {
+        return parseInt(parts.pop().split(';').shift());
+    }
+
+    // Default to 18 if cookie is missing
+    const defaultSize = 18;
+    saveBodyTextSizeToCookie(defaultSize);
+    return defaultSize;
+};
+
+const updateBodyTextSize = (delta) => {
+    const root = document.documentElement;
+    const currentSize = parseInt(getComputedStyle(root).getPropertyValue('--comment-body-text-size')) || 18;
+    const newSize = Math.min(Math.max(currentSize + delta, 12), 32);
+
+    root.style.setProperty('--comment-body-text-size', `${newSize}px`);
+    return newSize;
+};
+
+const handleBodyTextSizeChange = (delta) => {
+    const newSize = updateBodyTextSize(delta);
+    saveBodyTextSizeToCookie(newSize);
+};
 
 
 
@@ -447,7 +480,7 @@ function addNavigationButtons() {
 
         if (currentIndex === -1) return;
 
-        document.querySelector('.post-summary').innerHTML = `${data[currentIndex].title}<sub>${data[currentIndex].note ? data[currentIndex].note : ''}</sub>`;
+        document.querySelector('.post-summary').innerHTML = `${data[currentIndex].title} <sub>${data[currentIndex].note ? data[currentIndex].note : ''}</sub>`;
 
         const prevPost = data[currentIndex - 1];
         const nextPost = data[currentIndex + 1];
@@ -839,7 +872,11 @@ const init = () => {
         lazyObserver.observe(block);
     });
 
-    // 4. Global Events
+    // 4. comment-body text size from cookie
+    const savedSize = getBodyTextSizeFromCookie();
+    document.documentElement.style.setProperty('--comment-body-text-size', `${savedSize}px`);
+
+    // 5. Global Events
     document.addEventListener('click', handleBodyClick, false);
 };
 

@@ -10,7 +10,7 @@
     --border-primary: #ccc;
     --border-subtle: #eee;
     --text-zizun: blue;
-    --comment-font-size: 18px;
+    --comment-body-text-size: 18px;
     color-scheme: light dark;
 }
 
@@ -89,11 +89,18 @@ a:focus {
     text-decoration: underline;
 }
 
+/* GIUN_TAHOMA */
+.comment-body {
+    font-family: Tahoma, Verdana, 'sans-serif'
+}
+
+
+
 /* LAYOUT */
 
 body {
     margin: 0 auto;
-    font-family: GIUN_TAHOMA, Tahoma, 'sans-serif';
+    font-family: GIUN_TAHOMA, Tahoma, Verdana, 'sans-serif';
     font-size: 16px;
     background: var(--bg-secondary);
     color: var(--text-secondary);
@@ -111,11 +118,16 @@ body {
 
 .header {
     padding: 5px;
+    text-align: center;
 }
 
 .header a {
     color: var(--text-secondary);
     text-decoration: none;
+    overflow-wrap: normal;
+    word-wrap: normal;
+    hyphens: manual;
+    word-break: keep-all;
 }
 
 .header a:hover {
@@ -143,22 +155,13 @@ body {
 }
 
 .footer-links a {
-    color: #0066cc;
-    text-decoration: none;
     font-size: 14px;
-    transition: color 0.2s;
-}
-
-.footer-links a:hover {
-    color: #004494;
-    text-decoration: underline;
 }
 
 /* Optional: separator between links */
 .footer-links a:not(:last-child)::after {
-    content: "|";
+    content: "";
     margin-left: 15px;
-    color: #ccc;
     text-decoration: none;
     display: inline-block;
 }
@@ -188,15 +191,15 @@ summary.post-summary {
 }
 
 summary.post-summary sub {
-    font-size: 0.5em;
+    font-size: 0.4em;
     padding-left: 1em;
+    padding-top: 2em;
 }
 
 summary::before {
     content: '›';
     display: inline-block;
     margin-right: 10px;
-    font-family: serif;
     font-weight: 100;
     transition: transform 0.2s ease;
 }
@@ -211,7 +214,7 @@ details[open] summary::before {
     margin: 20px 0;
     border-radius: 5px;
     color: var(--text-secondary);
-    font-size: var(--comment-font-size);
+    font-size: var(--comment-body-text-size);
 }
 
 
@@ -258,7 +261,7 @@ details[open] summary::before {
 .comment-body {
     white-space: normal;
     padding: 0 10px;
-    font-size: var(--comment-font-size);
+    font-size: var(--comment-body-text-size);
     position: relative;
 }
 
@@ -268,7 +271,6 @@ details[open] summary::before {
 
 a.comment-ref {
     font-size: 10px;
-    font-family: 'GIUN_TAHOMA';
     font-weight: bold;
     border: 1px solid var(--border-primary);
     padding: 5px;
@@ -278,6 +280,11 @@ a.comment-ref {
 
 a.comment-ref>i {
     color: var(--text-link-alt) !important;
+}
+
+a.comment-ref:hover {
+    text-decoration: none;
+    background-color: var(--border-subtle);
 }
 
 .youtube-link,
@@ -373,18 +380,6 @@ p.footer-post-tittle.active {
     color: var(--text-secondary);
 }
 
-.popup-editor {
-    display: block;
-    position: absolute;
-    z-index: 1000;
-    background-color: var(--bg-secondary);
-    border: 1px solid var(--border-primary);
-    color: var(--text-secondary);
-    border-radius: 5px;
-    font-family: 'GIUN_TAHOMA';
-}
-
-
 .post-body .big-img,
 .post-body iframe,
 .comment-block .big-img,
@@ -448,9 +443,9 @@ p.footer-post-tittle.active {
 }
 
 .btn-action-group button {
-    width: 35px;
-    height: 35px;
-    background-color: var(--bg-tertiary);
+    width: 40px;
+    height: 40px;
+    background-color: var(--bg-primary);
     color: var(--text-secondary);
     border: 1px solid var(--border-primary);
     box-shadow: 1px 3px 5px rgba(0, 0, 0, 0.1);
@@ -459,8 +454,13 @@ p.footer-post-tittle.active {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 16px;
+    font-size: 14px;
     flex-shrink: 0;
+}
+
+.btn-action-group button:hover {
+    background-color: var(--bg-tertiary);
+    border-color: var(--border-subtle);
 }
 
 /* Visibility Logic */
