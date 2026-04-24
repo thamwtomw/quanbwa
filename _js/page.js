@@ -177,8 +177,8 @@ const lazyObserver = new IntersectionObserver((entries, observer) => {
         // Route to specific processing based on class
         if (el.classList.contains('post-body')) {
             typeof processPostBodyBlock === 'function' && processPostBodyBlock(el);
-        } else if (el.classList.contains('comment-block')) {
-            typeof processCommentBlock === 'function' && processCommentBlock(el);
+        } else if (el.classList.contains('comment-header') || el.classList.contains('comment-body') || el.classList.contains('comment-footer')) {
+            typeof processCommentBlock === 'function' && processCommentBlock(el.closest('.comment-block'));
         }
 
         observer.unobserve(el);
@@ -194,7 +194,9 @@ const lazyObserver = new IntersectionObserver((entries, observer) => {
  */
 
 function processPostBodyBlock(postBody) {
+    if (postBody.getAttribute('is-processed') === 'true') return;
     parseCustomTags(postBody);
+    postBody.setAttribute('is-processed', 'true');
 }
 
 
@@ -203,6 +205,7 @@ function processPostBodyBlock(postBody) {
  */
 
 function processCommentBlock(commentBlock) {
+  if (commentBlock.getAttribute('is-processed') === 'true') return;
 
     parseBwaStyle(commentBlock);
 
@@ -220,6 +223,7 @@ function processCommentBlock(commentBlock) {
         postTitle.textContent = document.querySelector('.post-item-row.active .post-item-link')?.textContent || '';
         commentFooter.appendChild(postTitle);
     }
+    commentBlock.setAttribute('is-processed', 'true');
 }
 
 function addCommentRef(commentBlock) {
@@ -298,7 +302,7 @@ function showPopupComment(e, ref) {
 
 
 
-    popup.classList.add('popup-comment');
+    popup.classList.add('popup-container', 'popup-comment');
     const closeBtn = document.createElement('button');
     closeBtn.className = 'popup-close-btn';
     closeBtn.type = 'button';
@@ -552,8 +556,8 @@ function makeDraggable(el) {
     let initialLeft, initialTop;
 
     el.addEventListener('pointerdown', (e) => {
-        if (e.target.closest('.popup-close-btn') ||
-            e.target.closest('a, button, input, textarea, select')) {
+        if (e.target.closest('a, button, input, textarea, select') ||
+            e.target.closest('.comment-body, .comment-footer')) {
             return;
         }
 
@@ -628,7 +632,7 @@ function isFavoriteBlogger(authorLink) {
         '07419751018770328206', //'Sweet Hoy'
     ];
     return authorLink && ids.some(id => authorLink.href.endsWith(id));
-}
+}                                           
 
 function lightenForDarkMode(hexColor, amount = 25) {
     // Convert hex to HSL, increase lightness, convert back
@@ -869,7 +873,8 @@ const init = () => {
             block.id = `ref-${refLink.textContent.slice(1, -1)}`;
         }
 
-        lazyObserver.observe(block);
+        const targets = block.querySelectorAll('.comment-footer, .comment-header, .comment-author');
+        targets.forEach(el => lazyObserver.observe(el));
     });
 
     // 4. comment-body text size from cookie
