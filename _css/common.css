@@ -18,8 +18,8 @@
     --text-warning: #FF9966;
     --text-danger: #be2323;
 
-    --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
-    --border-radius: 5px;
+    --box-shadow: 3px 7px 12px rgba(0, 0, 0, 0.1);
+    --border-radius: 3px;
 
     color-scheme: light dark;
 }
@@ -45,8 +45,8 @@
         --text-warning: #ffb38a;
         --text-danger: #ff5c5c;
 
-        --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
-        --border-radius: 5px;
+        --box-shadow: 3px 7px 12px rgba(86, 86, 86, 0.1);
+        --border-radius: 3px;
     }
 }
 
@@ -58,6 +58,10 @@
 *::-webkit-scrollbar-thumb {
     background: rgba(120, 120, 120, 0.7);
     border-radius: 6px;
+}
+
+* {
+    box-sizing: border-box;
 }
 
 h1,
@@ -332,7 +336,7 @@ p.footer-post-tittle.active {
 /* POPUP */
 .popup-container {
     width: calc(100% - 14px);
-    max-width: 720px;
+    max-width: 686px;
     /* never wider than screen - safe margins */
     min-width: 280px;
     /* readable on small phones */
@@ -393,7 +397,7 @@ p.footer-post-tittle.active {
 .post-body iframe,
 .comment-block .big-img,
 .comment-block iframe {
-    max-width: 80%;
+    max-width: 95%;
     height: auto;
     display: block;
     margin: 0 auto;

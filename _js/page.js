@@ -205,7 +205,7 @@ function processPostBodyBlock(postBody) {
  */
 
 function processCommentBlock(commentBlock) {
-  if (commentBlock.getAttribute('is-processed') === 'true') return;
+    if (commentBlock.getAttribute('is-processed') === 'true') return;
 
     parseBwaStyle(commentBlock);
 
@@ -403,25 +403,23 @@ function initActionMenu() {
             }
         });
     });
-
+    const topBtn = createBtn('↑', 'Top', () => window.scrollTo({ top: 0 }));
     const hashBtn = createBtn('#', 'Comment', () => {
         const hash = window.location.hash || '#ref-1';
         const el = document.querySelector(hash);
         if (el) {
             let parent = el.closest('details');
             if (parent && !parent.open) parent.open = true;
-            setTimeout(() => el.scrollIntoView({ behavior: 'smooth' }), 50);
+            setTimeout(() => el.scrollIntoView(), 50);
         }
     });
-
-    const fontUpBtn = createBtn('A+', '', () => handleBodyTextSizeChange(1), true, false);
-    const fontDownBtn = createBtn('A-', '', () => handleBodyTextSizeChange(-1), true, false);
-    const topBtn = createBtn('↑', 'Top', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-    const botBtn = createBtn('↓', 'Bottom', () => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }));
+    const botBtn = createBtn('↓', 'Bottom', () => window.scrollTo({ top: document.body.scrollHeight }));
     const prevBtn = createBtn('←', 'Prev Post', () => document.getElementById('goto-pre-post')?.click());
     const nextBtn = createBtn('→', 'Next Post', () => document.getElementById('goto-next-post')?.click());
+    const fontUpBtn = createBtn('A+', '', () => handleBodyTextSizeChange(1), true, false);
+    const fontDownBtn = createBtn('A-', '', () => handleBodyTextSizeChange(-1), true, false);
 
-    actionGroup.append(mainBtn, favBtn, topBtn, botBtn, hashBtn, prevBtn, nextBtn, fontUpBtn, fontDownBtn);
+    actionGroup.append(mainBtn, favBtn, topBtn, hashBtn, botBtn, prevBtn, nextBtn, fontUpBtn, fontDownBtn);
     document.body.appendChild(actionGroup);
 }
 
@@ -632,45 +630,35 @@ function isFavoriteBlogger(authorLink) {
         '07419751018770328206', //'Sweet Hoy'
     ];
     return authorLink && ids.some(id => authorLink.href.endsWith(id));
-}                                           
-
-function lightenForDarkMode(hexColor, amount = 25) {
-    // Convert hex to HSL, increase lightness, convert back
-    let r = parseInt(hexColor.slice(1, 3), 16);
-    let g = parseInt(hexColor.slice(3, 5), 16);
-    let b = parseInt(hexColor.slice(5, 7), 16);
-
-    // Simple RGB → HSL (approximate)
-    r /= 255; g /= 255; b /= 255;
-    let max = Math.max(r, g, b), min = Math.min(r, g, b);
-    let h, s, l = (max + min) / 2;
-
-    if (max === min) {
-        h = s = 0;
-    } else {
-        let d = max - min;
-        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-        switch (max) {
-            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-            case g: h = (b - r) / d + 2; break;
-            case b: h = (r - g) / d + 4; break;
-        }
-        h /= 6;
-    }
-
-    // Increase lightness in dark mode
-    l = Math.min(0.95, l + amount / 100);
-
-    // Convert HSL back to RGB (simplified version - or use a library)
-    // For simplicity, here's a direct brightening fallback:
-    return lightenRGB(hexColor, 45); // fallback to RGB boost
 }
 
-// Quick RGB version (good enough for most cases)
-function lightenRGB(hex, amount) {
+
+// Adjust color for darkmode
+function lightenRGB(rawColor, amount) {
+    const toHex = (col) => {
+        if (!col) return col;
+        if (col.startsWith('#')) return col;
+
+        // Use browser engine to convert names/rgb to hex
+        const temp = document.createElement('div');
+        temp.style.color = col;
+        document.body.appendChild(temp);
+        const style = window.getComputedStyle(temp).color; // returns "rgb(r, g, b)"
+        document.body.removeChild(temp);
+
+        const res = style.match(/\d+/g);
+        return res ? `#${res.slice(0, 3).map(x => (+x).toString(16).padStart(2, '0')).join('')}` : col;
+    };
+
+    const hex = toHex(rawColor);
+
+    // ZZ
+    if (hex.toLowerCase() === '#0000ff') return '#2196f3';
+
     let r = Math.min(255, parseInt(hex.slice(1, 3), 16) + amount);
     let g = Math.min(255, parseInt(hex.slice(3, 5), 16) + amount);
     let b = Math.min(255, parseInt(hex.slice(5, 7), 16) + amount);
+
     return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
 }
 
@@ -715,6 +703,25 @@ function parseCustomTags(container) {
             };
         }
         span.replaceWith(imgElement);
+    });
+
+
+    // Adjust color for darkmode. Remove fontSize
+    const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
+    const colorFontTags = container.querySelectorAll('font, span');
+    colorFontTags.forEach(f => {
+
+        if (prefersDarkScheme.matches) {
+            let rawColor = f.color || (f.style && f.style.color);
+
+            if (rawColor) {
+                const newColor = lightenRGB(rawColor, 70);
+                if (f.color) f.color = newColor;
+                if (f.style && f.style.color) f.style.color = newColor;
+            }
+        }
+        f.removeAttribute('size');
+        f.style.removeProperty('font-size');
     });
 }
 
@@ -807,7 +814,7 @@ function parseBwaStyle(commentBlock) {
                         let finalColor = vips[3];
                         // Check if user prefers dark mode
                         if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                            finalColor = lightenRGB(vips[3], 120);   // Increase this number (30-70) for more/less brightening
+                            finalColor = lightenRGB(vips[3], 70);   // Increase this number (30-70) for more/less brightening
                         }
 
                         commentBody.style.color = finalColor;
